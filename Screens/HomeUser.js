@@ -8,8 +8,6 @@ import Dictionary from '../Components/Dictionary';
 import Quiz from '../Components/Quiz';
 import Profile from '../Components/Profile';
 
-
-// Define screen names
 const translatorScreen = 'Translator';
 const proTranslatorScreen = 'ProTranslator';
 const profileScreen = 'Profile';
