@@ -1,20 +1,86 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { StatusBar, StyleSheet, View, ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Onboarding from "./OnBoarding/Onboarding";
+import Home from "./Screens/Home";
+import SignIn from "./Screens/Login/SignIn";
+import Welcome from "./Screens/Login/Welcome";
+import SignUp from  "./Screens/Login/SignUp"
+import OnboardingContext from "./OnBoarding/OnboardingContext"; 
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+import HomeUser from "./Screens/HomeUser";
+import HomeAdmin from "./Screens/HomeAdmin";
+
+const Stack = createStackNavigator();
+
+
+const Loading = () => (
+  <View style={styles.loadingContainer}>
+    <ActivityIndicator size="large" />
+  </View>
+);
+
+const OnboardingStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Onboarding" component={Onboarding} />
+  </Stack.Navigator>
+);
+
+const MainStack = () => (
+  <Provider store={store}>
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Home" component={Home} />
+    <Stack.Screen name="SignIn" component={SignIn} />
+    <Stack.Screen name="Welcome" component={Welcome} />
+    <Stack.Screen name="SignUp" component={SignUp} />
+    <Stack.Screen name="HomeUser" component={HomeUser} />
+    <Stack.Screen name="HomeAdmin" component={HomeAdmin} />
+  </Stack.Navigator>
+  </Provider>
+);
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
+  const [viewedOnboarding, setViewedOnboarding] = useState(false);
+
+  const checkOnboarding = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@viewedOnboarding");
+      if (value !== null) {
+        setViewedOnboarding(true);
+      }
+    } catch (err) {
+      console.log("Error @checkOnboarding:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkOnboarding();
+  }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <OnboardingContext.Provider value={{ viewedOnboarding, setViewedOnboarding }}>
       <StatusBar style="auto" />
-    </View>
+      <NavigationContainer>
+        {!viewedOnboarding ? <OnboardingStack /> : <MainStack />}
+      </NavigationContainer>
+    </OnboardingContext.Provider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
