@@ -10,10 +10,11 @@ const Details = ({ route }) => {
     const navigation = useNavigation();
 
     useEffect(() => {
-        if (!item || !item.headings) {
-            alert("Item or headings are missing");
+        if (!item || !item.id) {
+            alert("Invalid item data");
+            navigation.goBack();
         }
-    }, [item]);
+    }, [item, navigation]);
 
     const handleUpdate = async () => {
         try {
