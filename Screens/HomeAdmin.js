@@ -8,6 +8,8 @@ import DictionaryAdmin from '../Components/Admin/DictionaryAdmin';
 import Profile from '../Components/Profile';
 import Translation_Mangementpage from '../Components/Admin/Translation_Mangementpage';
 import AddWord from '../Components/Admin/Add_words';
+import Details from '../Components/Admin/Details';
+import Edit_words from '../Components/Admin/Edit_words';
 
 const proTranslatorAdminScreen = 'ProTranslatorAdmin';
 const dictionaryAdminScreen = 'DictionaryAdmin';
@@ -28,6 +30,17 @@ function DictionaryAdminStack() {
       <Stack.Screen
         name="AddWord"
         component={AddWord}
+        options={{ headerShown: true }}
+      />
+       <Stack.Screen
+        name="Details"
+        component={Details}
+        options={{ headerShown: true }}
+      />
+
+<Stack.Screen
+        name="Edit_words"
+        component={Edit_words}
         options={{ headerShown: true }}
       />
    

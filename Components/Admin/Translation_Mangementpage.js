@@ -16,7 +16,7 @@ export default function Translation_Mangementpage() {
         <Text>Add Word</Text>
       </TouchableOpacity>
       
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('EditWord')}>
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Edit_words')}>
         <FontAwesome name="edit" size={24} color="black" />
         <Text>Edit Word</Text>
       </TouchableOpacity>
