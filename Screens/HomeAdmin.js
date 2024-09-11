@@ -10,6 +10,7 @@ import Translation_Mangementpage from '../Components/Admin/Translation_Mangement
 import AddWord from '../Components/Admin/Add_words';
 import Details from '../Components/Admin/Details';
 import Edit_words from '../Components/Admin/Edit_words';
+import Report from '../Components/Admin/Report';
 
 const proTranslatorAdminScreen = 'ProTranslatorAdmin';
 const dictionaryAdminScreen = 'DictionaryAdmin';
@@ -23,6 +24,11 @@ function DictionaryAdminStack() {
     <Stack.Navigator>
 
       <Stack.Screen
+        name="DictionaryAdmin"
+        component={DictionaryAdmin}
+        options={{ headerShown: true }}
+      />
+      <Stack.Screen
         name="Translation_Management_Page"
         component={Translation_Mangementpage}
         options={{ headerShown: true }}
@@ -32,21 +38,27 @@ function DictionaryAdminStack() {
         component={AddWord}
         options={{ headerShown: true }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="Details"
         component={Details}
         options={{ headerShown: true }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Edit_words"
         component={Edit_words}
         options={{ headerShown: true }}
       />
-   
+
+      <Stack.Screen
+        name="Report"
+        component={Report}
+        options={{ headerShown: true }}
+      />
+
     </Stack.Navigator>
-    
-    
+
+
   );
 }
 
@@ -68,7 +80,7 @@ export default function HomeAdmin() {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarShowLabel: false, 
+        tabBarShowLabel: false,
         tabBarActiveTintColor: 'black',
         tabBarInactiveTintColor: 'rgba(128, 128, 128, 0.5)',
         tabBarStyle: styles.tabBar,
@@ -86,9 +98,9 @@ const styles = StyleSheet.create({
   tabBar: {
     paddingBottom: 10,
     paddingHorizontal: 10,
-    height: 60, 
-    marginBottom:20,
-    marginHorizontal:20,
+    height: 60,
+    marginBottom: 20,
+    marginHorizontal: 20,
     borderRadius: 50,
     backgroundColor: 'white',
     shadowColor: '#000',
