@@ -1,14 +1,12 @@
-import { View, Text, Button, FlatList, TextInput, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text,  FlatList, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
-import { RetrieveAllCWords, UpdateCword, DeleteCword } from '../../utils/actions-proverbs/Cultural_words'; 
+import { RetrieveAllCWords, DeleteCword  } from '../../utils/actions-proverbs/Cultural_words'; 
 import debounce from 'lodash.debounce';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function Edit_words({ navigation }) {
   const [words, setWords] = useState([]);
   const [filteredWords, setFilteredWords] = useState([]);
-  const [selectedWord, setSelectedWord] = useState(null);
-  const [newHeading, setNewHeading] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -16,6 +14,7 @@ export default function Edit_words({ navigation }) {
       try {
         const data = await RetrieveAllCWords();
         const wordsList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        wordsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setWords(wordsList);
         setFilteredWords(wordsList);
       } catch (error) {
@@ -39,21 +38,15 @@ export default function Edit_words({ navigation }) {
     debouncedFilterWords();
   }, [searchQuery, debouncedFilterWords]);
 
-  const handleEdit = (id) => {
-    setSelectedWord(id);
-    const word = words.find(word => word.id === id);
-    if (word) {
-      setNewHeading(word.headings.join(', '));
-    }
-  };
-
-  const deleteWord = (id) => {
-    DeleteCword(id).then(() => {
+  const deleteWord = async (id) => {
+    try {
+      await DeleteCword(id);
       setWords(prevWords => prevWords.filter(word => word.id !== id));
       setFilteredWords(prevFiltered => prevFiltered.filter(word => word.id !== id));
-    }).catch(error => {
+      console.log('Word deleted successfully');
+    } catch (error) {
       console.error('Error deleting word:', error);
-    });
+    }
   };
 
   const handleItemPress = (item) => {

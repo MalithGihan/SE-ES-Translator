@@ -1,4 +1,4 @@
-import { getDatabase, ref, push, set, update, get } from 'firebase/database';
+import { getDatabase, ref, push, set, update, get , remove } from 'firebase/database';
 import { getFirebaseApp } from "../firebaseHelper";
 
 export const AddCWord = async (inputs) => {
@@ -93,5 +93,19 @@ export const RetrieveAllCWords = async () => {
     } catch (error) {
         console.error('Error retrieving all words:', error);
         throw new Error('Error retrieving all words: ' + error.message);
+    }
+};
+export const DeleteCword = async (id) => {
+    try {
+        const app = getFirebaseApp();
+        const db = getDatabase(app);
+        const wordRef = ref(db, `Culturalwords/${id}`);
+
+        await remove(wordRef);
+
+        console.log('Word deleted successfully');
+    } catch (error) {
+        console.error('Error deleting word:', error);
+        throw new Error('Error deleting word: ' + error.message);
     }
 };
