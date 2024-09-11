@@ -1,16 +1,42 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import ProTranslatorAdmin from '../Components/Admin/ProTranslatorAdmin';
 import DictionaryAdmin from '../Components/Admin/DictionaryAdmin';
 import Profile from '../Components/Profile';
+import Translation_Mangementpage from '../Components/Admin/Translation_Mangementpage';
+import AddWord from '../Components/Admin/Add_words';
 
 const proTranslatorAdminScreen = 'ProTranslatorAdmin';
 const dictionaryAdminScreen = 'DictionaryAdmin';
 const profileScreen = 'Profile';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+function DictionaryAdminStack() {
+  return (
+    <Stack.Navigator>
+
+      <Stack.Screen
+        name="Translation_Management_Page"
+        component={Translation_Mangementpage}
+        options={{ headerShown: true }}
+      />
+      <Stack.Screen
+        name="AddWord"
+        component={AddWord}
+        options={{ headerShown: true }}
+      />
+   
+    </Stack.Navigator>
+    
+    
+  );
+}
+
 
 export default function HomeAdmin() {
   return (
@@ -37,9 +63,8 @@ export default function HomeAdmin() {
       })}
     >
       <Tab.Screen name={proTranslatorAdminScreen} component={ProTranslatorAdmin} />
-      <Tab.Screen name={dictionaryAdminScreen} component={DictionaryAdmin} />
+      <Tab.Screen name={dictionaryAdminScreen} component={DictionaryAdminStack} />
       <Tab.Screen name={profileScreen} component={Profile} />
-  
     </Tab.Navigator>
   );
 }
