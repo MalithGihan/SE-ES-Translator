@@ -1,4 +1,4 @@
-import { getDatabase, ref, push, set, update } from 'firebase/database';
+import { getDatabase, ref, push, set, update, get } from 'firebase/database';
 import { getFirebaseApp } from "../firebaseHelper";
 
 export const AddCWord = async (inputs) => {
@@ -65,10 +65,33 @@ export const UpdateCword = async (id, headings, navigation) => {
 
         console.log('Word updated successfully:', nonEmptyHeadings);
         if (navigation && typeof navigation.navigate === 'function') {
-            navigation.navigate("AddWord");
+            navigation.navigate("Edit_words");
         }
     } catch (error) {
         console.error('Error updating Word:', error);
         throw new Error('Error updating Word: ' + error.message);
+    }
+};
+
+export const RetrieveAllCWords = async () => {
+    try {
+        const app = getFirebaseApp();
+        const db = getDatabase(app);
+        const wordsRef = ref(db, 'Culturalwords');
+
+        const snapshot = await get(wordsRef);
+
+        if (!snapshot.exists()) {
+            throw new Error('No cultural words found in the database');
+        }
+
+        const data = snapshot.val();
+        console.log('All words retrieved successfully:', data);
+
+        return data;
+
+    } catch (error) {
+        console.error('Error retrieving all words:', error);
+        throw new Error('Error retrieving all words: ' + error.message);
     }
 };

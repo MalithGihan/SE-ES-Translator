@@ -1,139 +1,163 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, Pressable, TextInput, StyleSheet } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, Button, FlatList, TextInput, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { RetrieveAllCWords, UpdateCword, DeleteCword } from '../../utils/actions-proverbs/Cultural_words'; 
 import debounce from 'lodash.debounce';
-import { fetchTodos, deleteTodo } from "../../utils/actions-proverbs/Cultural_words";
+import { FontAwesome } from '@expo/vector-icons';
 
-export default function Edit_words () {
-    const [todos, setTodos] = useState([]);
-    const [filteredTodos, setFilteredTodos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [additionalInput2, setAdditionalInput2] = useState('');
-    const navigation = useNavigation();
+export default function Edit_words({ navigation }) {
+  const [words, setWords] = useState([]);
+  const [filteredWords, setFilteredWords] = useState([]);
+  const [selectedWord, setSelectedWord] = useState(null);
+  const [newHeading, setNewHeading] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
-    useEffect(() => {
-        const unsubscribe = fetchTodos(setTodos, setFilteredTodos, setLoading, setError);
-        return () => unsubscribe();
-    }, []);
-
-    const debouncedFilterTodos = useCallback(debounce(() => {
-        const filtered = todos.filter(todo => {
-            const matchesAdditionalInput2 = additionalInput2
-                ? todo.headings && todo.headings.some(heading => heading.toLowerCase().includes(additionalInput2.toLowerCase()))
-                : true;
-            const matchesSearchQuery = searchQuery
-                ? todo.headings && todo.headings.some(heading => heading.toLowerCase().includes(searchQuery.toLowerCase()))
-                : true;
-            return matchesAdditionalInput2 && matchesSearchQuery;
-        });
-        setFilteredTodos(filtered);
-    }, 300), [todos, additionalInput2, searchQuery]);
-
-    useEffect(() => {
-        debouncedFilterTodos();  
-    }, [additionalInput2, searchQuery, debouncedFilterTodos]);
-
-    const handleTextChange = (text) => {
-        setAdditionalInput2(text);
-        setSearchQuery(text);
-        debouncedFilterTodos();
+  useEffect(() => {
+    const fetchWords = async () => {
+      try {
+        const data = await RetrieveAllCWords();
+        const wordsList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        setWords(wordsList);
+        setFilteredWords(wordsList);
+      } catch (error) {
+        console.error('Error fetching words:', error);
+      }
     };
 
-    return (
-        <View style={styles.PageContainer}>
-            <TextInput
-                style={styles.searchInput}
-                placeholder='Search todos'
-                placeholderTextColor='#aaaaaa'
-                onChangeText={handleTextChange}
-                value={additionalInput2}
-            />
-            {filteredTodos.length > 0 ? (
-                <FlatList
-                    data={filteredTodos}
-                    numColumns={1}
-                    renderItem={({ item }) => (
-                        <View style={styles.container}>
-                            <Pressable style={styles.card}
-                                onPress={() => navigation.navigate('Details', { item })}
-                            >
-                                <View style={styles.innerContainer}>
-                                    {item.headings && item.headings.map((heading, index) => (
-                                        <Text key={index} style={styles.itemHeading}>
-                                            {heading}
-                                        </Text>
-                                    ))}
-                                </View>
-                                <FontAwesome
-                                    name='trash'
-                                    color='red'
-                                    onPress={() => deleteTodo(item, setTodos, setFilteredTodos)}
-                                    style={styles.deletebtn}
-                                />
-                            </Pressable>
-                        </View>
-                    )}
-                />
-            ) : (
-                <Text>No todos found. Add a todo to get started!</Text>
-            )}
-        </View>
-    );
+    fetchWords();
+  }, []);
+
+  const debouncedFilterWords = useCallback(debounce(() => {
+    const filtered = words.filter(word => {
+      return searchQuery
+        ? word.headings.some(heading => heading.toLowerCase().includes(searchQuery.toLowerCase()))
+        : true;
+    });
+    setFilteredWords(filtered);
+  }, 300), [words, searchQuery]);
+
+  useEffect(() => {
+    debouncedFilterWords();
+  }, [searchQuery, debouncedFilterWords]);
+
+  const handleEdit = (id) => {
+    setSelectedWord(id);
+    const word = words.find(word => word.id === id);
+    if (word) {
+      setNewHeading(word.headings.join(', '));
+    }
+  };
+
+  const deleteWord = (id) => {
+    DeleteCword(id).then(() => {
+      setWords(prevWords => prevWords.filter(word => word.id !== id));
+      setFilteredWords(prevFiltered => prevFiltered.filter(word => word.id !== id));
+    }).catch(error => {
+      console.error('Error deleting word:', error);
+    });
+  };
+
+  const handleItemPress = (item) => {
+    navigation.navigate('Details', { item: item });
+  };
+
+  return (
+    <View style={styles.PageContainer}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder='Search words'
+        placeholderTextColor='#aaaaaa'
+        onChangeText={setSearchQuery}
+        value={searchQuery}
+      />
+      <FlatList
+        data={filteredWords}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.container}
+            onPress={() => handleItemPress(item)}
+          >
+            <View style={styles.innerContainer}>
+              {item.headings && item.headings.map((heading, index) => (
+                <Text key={index} style={styles.itemHeading}>
+                  {heading}
+                </Text>
+              ))}
+            </View>
+            <View style={styles.actions}>
+              <FontAwesome
+                name='trash'
+                color='red'
+                onPress={() => deleteWord(item.id)}
+                style={styles.deletebtn}
+              />
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+     
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    PageContainer: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: '#bfdad9',
-        justifyContent: 'center',
-        paddingTop: 10
-    },
-    searchInput: {
-        height: 40,
-        borderColor: '#888',
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        margin: 10,
-        color: '#000',
-        backgroundColor: '#fff',
-    },
-    container: {
-        flexDirection: 'row',
-        padding: 15,
-        marginVertical: 8,
-        marginHorizontal: 10,
-        borderRadius: 10,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-    },
-    deletebtn: {
-        fontSize: 24,
-        marginRight: 15,
-    },
-    innerContainer: {
-        marginLeft: 10,
-        justifyContent: 'center',
-    },
-    itemHeading: {
-        paddingTop: 5,
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    card: {
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        minHeight: 60,
-    }
+  PageContainer: {
+    flex: 1,
+    backgroundColor: '#bfdad9',
+    paddingTop: 10,
+    paddingHorizontal: 10,
+  },
+  searchInput: {
+    height: 40,
+    borderColor: '#888',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    color: '#000',
+    backgroundColor: '#fff',
+  },
+  container: {
+    flexDirection: 'row',
+    padding: 15,
+    marginVertical: 8,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  },
+  innerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  itemHeading: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  editContainer: {
+    marginTop: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    padding: 8,
+    marginBottom: 10,
+  },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  editButton: {
+    marginRight: 15,
+    fontSize: 16,
+    color: '#007BFF',
+  },
+  deletebtn: {
+    fontSize: 24,
+  },
 });

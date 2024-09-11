@@ -5,8 +5,8 @@ import { UpdateCword } from "../../utils/actions-proverbs/Cultural_words";
 
 const Details = ({ route }) => {
     const { item } = route.params || {}; // Safeguard against missing item
-    const [headings, setHeadings] = useState(item.headings || []); 
-    const [currentHeading, setCurrentHeading] = useState(''); 
+    const [headings, setHeadings] = useState(item.headings || []);
+    const [currentHeading, setCurrentHeading] = useState('');
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const Details = ({ route }) => {
     const addHeading = () => {
         if (currentHeading.trim().length > 0) {
             setHeadings([...headings, currentHeading]);
-            setCurrentHeading(''); 
+            setCurrentHeading('');
         }
     };
 
@@ -37,7 +37,7 @@ const Details = ({ route }) => {
     };
 
     const handleCancel = () => {
-        navigation.goBack(); 
+        navigation.goBack();
     };
 
     return (
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     headingContainer: {
-        backgroundColor:'white',
+        backgroundColor: 'white',
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
