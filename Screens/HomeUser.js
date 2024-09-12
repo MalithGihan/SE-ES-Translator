@@ -39,7 +39,7 @@ export default function HomeUser() {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarShowLabel: false, // Hide the label under the icons
+        tabBarShowLabel: false,
         tabBarActiveTintColor: 'black',
         tabBarInactiveTintColor: 'rgba(128, 128, 128, 0.5)',
         tabBarStyle: styles.tabBar,
