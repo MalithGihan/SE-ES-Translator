@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { View, TextInput, StyleSheet, Alert, Text } from "react-native";
-import CustomButton from "../../Screens/Login/CustomButton"; 
+import CustomButton from "../../Screens/Login/CustomButton";
 import {
   addProverb,
   getProverbs,
   updateProverb,
   deleteProverb,
-} from "../../utils/actions-proverbs/proverbAction.js"; 
+} from "../../utils/actions-proverbs/proverbAction.js";
 import { ScrollView } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default ProTranslatorAdmin = ({ navigation }) => {
   const [sinhaleseProverb, setSinhaleseProverb] = useState("");
@@ -16,7 +17,7 @@ export default ProTranslatorAdmin = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [proverbs, setProverbs] = useState([]);
   const [editingProverb, setEditingProverb] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredProverbs, setFilteredProverbs] = useState([]);
 
   useEffect(() => {
@@ -25,9 +26,17 @@ export default ProTranslatorAdmin = ({ navigation }) => {
 
   useEffect(() => {
     if (searchQuery) {
-      const filtered = proverbs.filter((proverb) => 
-        proverb.sinhaleseProverb.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        proverb.englishTranslation.toLowerCase().includes(searchQuery.toLowerCase())
+      const filtered = proverbs.filter(
+        (proverb) =>
+          proverb.sinhaleseProverb
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          proverb.englishTranslation
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          proverb.singlishMeaning
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
       );
       setFilteredProverbs(filtered);
     } else {
@@ -39,7 +48,7 @@ export default ProTranslatorAdmin = ({ navigation }) => {
     try {
       const fetchedProverbs = await getProverbs();
       setProverbs(fetchedProverbs);
-      setFilteredProverbs(fetchedProverbs); // Ensure filteredProverbs has initial data
+      setFilteredProverbs(fetchedProverbs);
     } catch (error) {
       console.error("Error fetching proverbs:", error);
     }
@@ -47,7 +56,13 @@ export default ProTranslatorAdmin = ({ navigation }) => {
 
   const createOrUpdateProverb = async () => {
     if (!sinhaleseProverb || !englishTranslation) {
-      Alert.alert("Error", "Both fields are required.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Both fields are required.",
+        position: "bottom",
+        visibilityTime: 2000,
+      });
       return;
     }
 
@@ -60,10 +75,22 @@ export default ProTranslatorAdmin = ({ navigation }) => {
           singlishMeaning,
           englishTranslation
         );
-        Alert.alert("Success", "Proverb updated successfully!");
+        Toast.show({
+          type: "success",
+          text1: "Added!",
+          text2: "Proverb updated successfully!",
+          position: "bottom",
+          visibilityTime: 2000,
+        });
       } else {
         await addProverb(sinhaleseProverb, singlishMeaning, englishTranslation);
-        Alert.alert("Success", "Proverb added successfully!");
+        Toast.show({
+          type: "success",
+          text1: "Added!",
+          text2: "Proverb updated successfully!",
+          position: "bottom",
+          visibilityTime: 2000,
+        });
       }
       setSinhaleseProverb("");
       setSinglishMeaning("");
@@ -71,8 +98,13 @@ export default ProTranslatorAdmin = ({ navigation }) => {
       setEditingProverb(null);
       fetchProverbs();
     } catch (error) {
-      console.error("Error saving proverb:", error);
-      Alert.alert("Error", "Failed to save proverb.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to save proverb.",
+        position: "bottom",
+        visibilityTime: 2000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +125,7 @@ export default ProTranslatorAdmin = ({ navigation }) => {
         {
           text: "Cancel",
           onPress: () => console.log("Deletion cancelled"),
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Delete",
@@ -102,12 +134,17 @@ export default ProTranslatorAdmin = ({ navigation }) => {
               await deleteProverb(proverbId);
               fetchProverbs();
             } catch (error) {
-              console.error("Error deleting proverb:", error);
-              Alert.alert("Error", "Failed to delete proverb.");
+              Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Failed to delete proverb.",
+                position: "bottom",
+                visibilityTime: 2000,
+              });
             }
           },
-          style: "destructive"
-        }
+          style: "destructive",
+        },
       ],
       { cancelable: true }
     );
@@ -150,16 +187,12 @@ export default ProTranslatorAdmin = ({ navigation }) => {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-     
+
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           {filteredProverbs.map((proverb) => (
             <View key={proverb.id} style={styles.proverbContainer}>
-              <Text style={styles.proverbText}>
-                {proverb.sinhaleseProverb}
-              </Text>
-              <Text style={styles.meaningText}>
-                {proverb.singlishMeaning}
-              </Text>
+              <Text style={styles.proverbText}>{proverb.sinhaleseProverb}</Text>
+              <Text style={styles.meaningText}>{proverb.singlishMeaning}</Text>
               <Text style={styles.translationText}>
                 {proverb.englishTranslation}
               </Text>
@@ -178,6 +211,9 @@ export default ProTranslatorAdmin = ({ navigation }) => {
           ))}
         </ScrollView>
       </View>
+      <>
+        <Toast />
+      </>
     </View>
   );
 };
@@ -202,13 +238,13 @@ const styles = StyleSheet.create({
   searchInput: {
     height: 50,
     paddingVertical: 10,
-    borderColor: 'black',
+    borderColor: "black",
     borderWidth: 2,
     borderRadius: 10,
     paddingLeft: 10,
   },
   scrollViewContent: {
-    padding: 10, 
+    padding: 10,
   },
   proverbText: {
     fontSize: 20,
@@ -217,11 +253,11 @@ const styles = StyleSheet.create({
   meaningText: {
     fontSize: 15,
     margin: 5,
-    fontWeight: '300',
+    fontWeight: "300",
   },
   translationText: {
     fontSize: 25,
     margin: 5,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });

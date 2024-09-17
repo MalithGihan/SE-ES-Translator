@@ -3,11 +3,13 @@ import React from "react";
 import { logout } from "../utils/actions/authActions";
 import { useSelector, useDispatch } from "react-redux";
 import CustomButton from "../Screens/Login/CustomButton";
+import { useNavigation } from '@react-navigation/native';
 
-export default Profile = ({ navigation }) => {
+export default Profile = () => {
   const dispatch = useDispatch(); 
   const userData = useSelector((state) => state.auth.userData);
   const token = useSelector((state) => state.auth.token);
+  const navigation = useNavigation();
 
   const handleLogout = async () => {
     try {
@@ -31,6 +33,14 @@ export default Profile = ({ navigation }) => {
         ) : (
           <Text style={styles.text}>No user data available</Text>
         )}
+        <View style={styles.report}>
+          <TouchableOpacity onPress={() => navigation.navigate('ProverbReportScreen')}>
+            <Text style={styles.text}>Proverbs Report Management</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.text}>Dictionary Report Management</Text>
+          </TouchableOpacity>
+        </View>
         <CustomButton
           title="Sign Out"
           onPress={handleLogout}
@@ -72,5 +82,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     marginHorizontal: 15,
-  }
+  },
+  report: {
+    flexDirection: "colum",
+    justifyContent: "flex-start",
+    marginStart: 25,
+    marginTop: 20,
+    marginBottom: 50
+  },
 });

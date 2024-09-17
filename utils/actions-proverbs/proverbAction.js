@@ -145,11 +145,12 @@ export const deleteProverb = async (proverbId) => {
       })));
     }
   
-    // Remove duplicate results
+    // Remove duplicate results based on 'id'
     const uniqueResults = Array.from(new Set(results.map(a => a.id)))
       .map(id => {
-        return results.find(a => a.id === id)
+        return results.find(a => a.id === id);
       });
   
     return uniqueResults;
   };
+  
