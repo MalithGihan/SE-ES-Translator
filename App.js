@@ -13,6 +13,7 @@ import { Provider } from "react-redux";
 import { store } from "./store/store";
 import HomeUser from "./Screens/HomeUser";
 import HomeAdmin from "./Screens/HomeAdmin";
+import ProverbsReport from "./Components/Admin/ProverbsReport";
 
 const Stack = createStackNavigator();
 
