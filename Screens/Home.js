@@ -25,13 +25,16 @@ export default function Home() {
   const [translatedtext, settranslatedtext] = useState("");
   const [fromLang, setFromLang] = useState("en");
   const [toLang, setToLang] = useState("si");
+  const [language, setLanguage] = useState("en");
 
   const clearOnboarding = async () => {
     try {
       await AsyncStorage.removeItem("@viewedOnboarding");
       Alert.alert(
-        "Onboarding cleared",
-        "You will see the onboarding screens again when you restart the app."
+        language === "en" ? "Onboarding cleared" : "ඔබගේ මූලික පිටු මකා ඇත",
+        language === "en"
+          ? "You will see the onboarding screens again when you restart the app."
+          : "ඔබ යෙදුම නැවත ආරම්භ කරන විට නැවත මූලික පිටු දක්නට ලැබේ."
       );
     } catch (err) {
       console.log("Error @clearOnboarding", err);
@@ -58,11 +61,17 @@ export default function Home() {
       if (response && response.data && response.data.translated_text) {
         settranslatedtext(response.data.translated_text[toLang]);
       } else {
-        settranslatedtext("No translation found.");
+        settranslatedtext(
+          language === "en" ? "No translation found." : "පරිවර්තනයක් හමු නොවීය."
+        );
       }
     } catch (error) {
       console.error("Error fetching translation:", error);
-      settranslatedtext("Error fetching translation.");
+      settranslatedtext(
+        language === "en"
+          ? "Error fetching translation."
+          : "පරිවර්තනය ලබා ගැනීමේ දෝෂයකි."
+      );
     }
   };
 
@@ -82,21 +91,30 @@ export default function Home() {
   const copyToClipboard = async () => {
     if (translatedtext) {
       await Clipboard.setStringAsync(translatedtext);
-      Alert.alert("Copied", "Translation copied to clipboard!");
+      Alert.alert(
+        language === "en" ? "Copied" : "පිටපත් කර ඇත",
+        language === "en"
+          ? "Translation copied to clipboard!"
+          : "පරිවර්තනය පසුරු පුවරුවට පිටපත් කර ඇත!"
+      );
     }
+  };
+
+  const toggleLanguage = () => {
+    setLanguage((prev) => (prev === "en" ? "si" : "en"));
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.leftCorner}>
-        <Text style={styles.text}>Home</Text>
+        <Text style={styles.text}>{language === "en" ? "Home" : "මුල් පිටුව "}</Text>
       </View>
 
       <View style={styles.rightCorner}>
         <CommonNavBtn
-          title="Sign In"
+          title={language === "en" ? "Sign In" : "ඇතුල් වන්න"}
           onPress={() => navigation.navigate("Welcome")}
-          style={{ marginVertical: 8 }}
+          style={{ marginVertical: 6 }}
         />
       </View>
 
@@ -115,49 +133,49 @@ export default function Home() {
           </Text>
         </View>
         <View style={styles.commenarea}>
-          <View  style={styles.inputContainer}>
-          <TextInput
-            style={styles.additionalInput}
-            placeholder="Enter Text"
-            placeholderTextColor="#aaaaaa"
-            onChangeText={setenteredtext}
-            value={enteredtext}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-            multiline={true}
-            textAlignVertical="top"
-          />
-          <View style={styles.btn}>
-            <TouchableOpacity
-              onPress={onSubmit}
-              style={styles.speakButton}
-              disabled={!enteredtext}
-            >
-              <Ionicons
-                name="send"
-                size={24}
-                color={enteredtext ? "#0288D1" : "#aaaaaa"}
-              />
-            </TouchableOpacity>
-            {toLang !== "en" && (
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.additionalInput}
+              placeholder={language === "en" ? "Enter Text" : "පෙළ ඇතුල් කරන්න"}
+              placeholderTextColor="#aaaaaa"
+              onChangeText={setenteredtext}
+              value={enteredtext}
+              underlineColorAndroid="transparent"
+              autoCapitalize="none"
+              multiline={true}
+              textAlignVertical="top"
+            />
+            <View style={styles.btn}>
               <TouchableOpacity
+                onPress={onSubmit}
                 style={styles.speakButton}
-                onPress={() => speak(enteredtext)}
                 disabled={!enteredtext}
               >
-                <AntDesign
-                  name="sound"
+                <Ionicons
+                  name="send"
                   size={24}
                   color={enteredtext ? "#0288D1" : "#aaaaaa"}
                 />
               </TouchableOpacity>
-            )}
-          </View>
+              {toLang !== "en" && (
+                <TouchableOpacity
+                  style={styles.speakButton}
+                  onPress={() => speak(enteredtext)}
+                  disabled={!enteredtext}
+                >
+                  <AntDesign
+                    name="sound"
+                    size={24}
+                    color={enteredtext ? "#0288D1" : "#aaaaaa"}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.additionalInput}
-              placeholder="Translation"
+              placeholder={language === "en" ? "Translation" : "පරිවර්තනය"}
               placeholderTextColor="#aaaaaa"
               onChangeText={settranslatedtext}
               value={translatedtext}
@@ -184,10 +202,20 @@ export default function Home() {
 
       <View style={styles.centeredButton}>
         <CommonNavBtn
-          title="Clear Onboarding"
+          title={
+            language === "en" ? "Clear Onboarding" : "මුලික වින්‍යාස ඉවත් කරන්න"
+          }
           onPress={clearOnboarding}
-          style={{ marginVertical: 8 }}
         />
+      </View>
+      <View style={styles.centeredButton2}>
+        <TouchableOpacity onPress={toggleLanguage}>
+          {language === "en" ? (
+            <Ionicons name="language" size={24} color="black" />
+          ) : (
+            <Ionicons name="globe-outline" size={24} color="black" />
+          )}
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -211,12 +239,20 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   centeredButton: {
-    position:'absolute',
-    bottom:20,
-    left:20,
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
+    paddingBottom: 20,
+    paddingLeft: 20,
+  },
+  centeredButton2: {
+    position: "absolute",
+    bottom: 35,
+    right: 20,
   },
   text: {
     fontSize: 24,
+    marginTop: 8,
     fontWeight: "bold",
   },
   formContainer: {
@@ -237,7 +273,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  commenarea:{
+  commenarea: {
     width: "100%",
   },
   inputContainer: {
@@ -255,9 +291,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 15,
   },
-  paste:{
+  paste: {
     marginTop: 60,
-    flexDirection: 'row',
+    flexDirection: "row",
     justifyContent: "flex-end",
   },
   speakButton: {
@@ -267,7 +303,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   btn: {
-    marginTop:40,
+    marginTop: 40,
     flexDirection: "row",
     gap: 8,
     justifyContent: "flex-end",
