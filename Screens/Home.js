@@ -123,13 +123,13 @@ export default function Home() {
       <View style={styles.formContainer}>
         <View style={styles.Headings}>
           <Text style={styles.Heading}>
-            {fromLang === "en" ? "English" : "Sinhala"}
+            {fromLang === "en" ? "English" : "සිංහල "}
           </Text>
           <Pressable onPress={swapLanguages}>
             <AntDesign name="swap" size={24} color="black" />
           </Pressable>
           <Text style={styles.Heading}>
-            {toLang === "si" ? "Sinhala" : "English"}
+            {toLang === "si" ? "සිංහල " : "English"}
           </Text>
         </View>
         <View style={styles.commenarea}>
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   centeredButton2: {
     position: "absolute",
     bottom: 35,
-    right: 20,
+    right: 40,
   },
   text: {
     fontSize: 24,

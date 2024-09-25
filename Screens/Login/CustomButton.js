@@ -1,33 +1,41 @@
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
 
-export default CustomButton = (props) => {
+const CustomButton = (props) => {
   const isLoading = props.isLoading || false;
-  return (
-    <TouchableOpacity style={{...styles.btn,...props.style}} onPress={props.onPress}>
-        {
-          isLoading && isLoading == true? (
-            <ActivityIndicator size="small" color='black' />
-          ) : (
-            <Text style={{fontSize: 15,color:'black',fontWeight:'bold'}}>
-              {props.title}
-            </Text>
-          )
-        }
-    </TouchableOpacity>
-  )
-}
 
+  return (
+    <TouchableOpacity
+      style={{
+        ...styles.btn,
+        ...props.style,
+        borderColor: props.borderColor || 'black', // Dynamic border color
+      }}
+      onPress={props.onPress}
+    >
+      {
+        isLoading ? (
+          <ActivityIndicator size="small" color='black' />
+        ) : (
+          <Text style={{ fontSize: 15, color: props.textColor || 'black', fontWeight: 'bold' }}>
+            {props.title}
+          </Text>
+        )
+      }
+    </TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
-   btn : {
+  btn: {
     paddingHorizontal: 50,
     paddingVertical: 10,
-    borderColor: 'black',
     borderWidth: 2,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 15,
-   }
-})
+  }
+});
+
+export default CustomButton;

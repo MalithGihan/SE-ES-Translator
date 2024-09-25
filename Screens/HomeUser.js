@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+    position:'absolute'
   },
   tabBarIcon: {
     marginBottom: -5,

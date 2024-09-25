@@ -7,12 +7,13 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import axios from "axios";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Speech from "expo-speech";
 import * as Clipboard from "expo-clipboard";
+import { ThemeContext } from "./SettingsContext";
 
 export default Translator = () => {
   const [loading, setLoading] = useState(true);
@@ -21,6 +22,7 @@ export default Translator = () => {
   const [translatedtext, settranslatedtext] = useState("");
   const [fromLang, setFromLang] = useState("en");
   const [toLang, setToLang] = useState("si");
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
 
   const onSubmit = async () => {
     try {
@@ -70,24 +72,30 @@ export default Translator = () => {
   };
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page,{
+      backgroundColor: isDarkMode ? "black" : "#fff",
+      color: isDarkMode ? "white" : "black",
+    },]}>
       {loading && <Text></Text>}
       {error && <Text>Error: {error}</Text>}
       <View style={styles.formContainer}>
         <View style={styles.Headings}>
-          <Text style={styles.Heading}>
+          <Text style={[styles.Heading, { color: isDarkMode ? "white" : "black" }]}>
             {fromLang === "en" ? "English" : "Sinhala"}
           </Text>
           <Pressable onPress={swapLanguages}>
-            <AntDesign name="swap" size={24} color="black" />
+            <AntDesign name="swap" size={24} color={isDarkMode ? "white" : "black"} />
           </Pressable>
-          <Text style={styles.Heading}>
+          <Text style={[styles.Heading, { color: isDarkMode ? "white" : "black" }]}>
             {toLang === "si" ? "Sinhala" : "English"}
           </Text>
         </View>
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer,{backgroundColor: isDarkMode ? "black" : "#fff",
+      borderColor: isDarkMode ? "white" : "black"},]}>
           <TextInput
-            style={styles.additionalInput}
+            style={[styles.additionalInput, {
+              backgroundColor: isDarkMode ? "black" : "#fff"
+            },]}
             placeholder="Enter Text"
             placeholderTextColor="#aaaaaa"
             onChangeText={setenteredtext}
@@ -118,15 +126,18 @@ export default Translator = () => {
                 <AntDesign
                   name="sound"
                   size={24}
-                  color={enteredtext ? "#0288D1" : "#aaaaaa"}
+                  color={translatedtext ? (isDarkMode ? "white" : "#0288D1") : (isDarkMode ? "#aaaaaa" : "black")} 
                 />
               </TouchableOpacity>
             )}
           </View>
         </View>
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer,{backgroundColor: isDarkMode ? "black" : "#fff",
+      borderColor: isDarkMode ? "white" : "black"},]}>
           <TextInput
-            style={styles.additionalInput}
+            style={[styles.additionalInput, {
+              backgroundColor: isDarkMode ? "black" : "#fff"
+            },]}
             placeholder="Translation"
             placeholderTextColor="#aaaaaa"
             onChangeText={settranslatedtext}
@@ -145,7 +156,7 @@ export default Translator = () => {
             <AntDesign
               name="copy1"
               size={24}
-              color={translatedtext ? "#0288D1" : "#aaaaaa"}
+              color={translatedtext ? (isDarkMode ? "white" : "#0288D1") : (isDarkMode ? "#aaaaaa" : "black")} 
             />
           </TouchableOpacity>
         </View>
