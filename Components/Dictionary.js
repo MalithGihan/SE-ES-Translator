@@ -5,7 +5,7 @@ import * as Speech from 'expo-speech';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Clipboard from 'expo-clipboard';
-import { RetrieveAllCWords } from '../utils/actions-proverbs/Cultural_words' 
+import { RetrieveAllCWords } from '../utils/actions-proverbs/Cultural_words'
 
 export default Dictionary = () => {
   const [words, setWords] = useState([]);
@@ -47,8 +47,8 @@ export default Dictionary = () => {
   };
 
   const searchInRetrievedData = (text) => {
-    const filtered = words.filter(word => 
-      word.headings && word.headings.some(heading => 
+    const filtered = words.filter(word =>
+      word.headings && word.headings.some(heading =>
         heading.toLowerCase().includes(text.toLowerCase())
       )
     );
@@ -59,10 +59,10 @@ export default Dictionary = () => {
     const fetchWords = async () => {
       try {
         const data = await RetrieveAllCWords();
-        const wordsList = Object.keys(data).map(key => ({ 
-          id: key, 
+        const wordsList = Object.keys(data).map(key => ({
+          id: key,
           ...data[key],
-          createdAt: data[key].createdAt ? new Date(data[key].createdAt) : new Date() 
+          createdAt: data[key].createdAt ? new Date(data[key].createdAt) : new Date()
         }));
         setWords(wordsList);
         setLoading(false);
@@ -78,7 +78,7 @@ export default Dictionary = () => {
 
   const speak = (text) => {
     Speech.speak(text, {
-      language: 'en', 
+      language: 'en',
     });
   };
 
@@ -108,30 +108,30 @@ export default Dictionary = () => {
             value={additionalInput1}
             underlineColorAndroid='transparent'
             autoCapitalize='none'
-            multiline={true} 
+            multiline={true}
             textAlignVertical='top'
           />
           <View style={styles.btn}>
-            <TouchableOpacity 
-              onPress={onSubmit} 
+            <TouchableOpacity
+              onPress={onSubmit}
               style={styles.speakButton}
               disabled={!additionalInput1}
             >
-              <Ionicons 
-                name="send" 
-                size={24} 
-                color={additionalInput1 ? "#0288D1" : "#aaaaaa"} 
+              <Ionicons
+                name="send"
+                size={24}
+                color={additionalInput1 ? "#0288D1" : "#aaaaaa"}
               />
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.speakButton} 
+            <TouchableOpacity
+              style={styles.speakButton}
               onPress={() => speak(additionalInput1)}
               disabled={!additionalInput1}
             >
-              <AntDesign 
-                name="sound" 
-                size={24} 
-                color={additionalInput1 ? "#0288D1" : "#aaaaaa"} 
+              <AntDesign
+                name="sound"
+                size={24}
+                color={additionalInput1 ? "#0288D1" : "#aaaaaa"}
               />
             </TouchableOpacity>
           </View>
@@ -145,7 +145,7 @@ export default Dictionary = () => {
             underlineColorAndroid='transparent'
             autoCapitalize='none'
             editable={false}
-            multiline={true} 
+            multiline={true}
             textAlignVertical='top'
           />
           <TouchableOpacity
@@ -165,17 +165,15 @@ export default Dictionary = () => {
       {filteredWords.length > 0 ? (
         <FlatList
           data={filteredWords}
-          numColumns={1}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.container}>
-              <View>
-                <View style={styles.innerContainer}>
-                  {item.headings && item.headings.map((heading, index) => (
-                    <Text key={index} style={styles.itemHeading}>
-                      {heading}
-                    </Text>
-                  ))}
-                </View>
+              <View style={styles.innerContainer}>
+                {item.headings && item.headings.slice(2, 5).map((heading, index) => (
+                  <Text key={index} style={styles.itemHeading}>
+                    {index === 1 ? `"${heading}"` : heading}
+                  </Text>
+                ))}
               </View>
             </View>
           )}
@@ -190,126 +188,132 @@ export default Dictionary = () => {
 }
 
 const styles = StyleSheet.create({
-    page:{
-        flex:1,
-        flexDirection:'column',
-        backgroundColor:'#bfdad9',
-        alignItems:'center',
-        
-    },
-    formContainer: {
-        flexDirection: 'column',
-        padding: 10,
-       
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    Headings: {
-        flexDirection: 'row',
-        padding: 20,
-        width: 400,
-        justifyContent: 'space-evenly',
-        alignItems: 'center'
+  page: {
+    flex: 1,
+    flexDirection: 'column',
+    alignSelf: 'center',
+    marginHorizontal: -30
 
-    },
-    Heading: {
-        fontSize: 15,
-        fontWeight: 'bold',
+  },
+  formContainer: {
+    flexDirection: 'column',
+    paddingHorizontal: 0,
 
-    },
-    inputContainer: {
-        width:400,
-         flexDirection: 'column',
-         alignItems: 'flex-end',
-         marginBottom: 10,
-         borderColor: '#888',
-         borderWidth: 1,
-         borderRadius: 5,
-         paddingHorizontal: 10,
-         marginTop:20,
-         marginBottom: 20,
-         backgroundColor: '#fff',
-     },
-     input: {
-        flex: 1,
-        height: 50,
-        borderColor: '#888',
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        marginRight: 10,
-        color: '#000',
-        
-    },
-    
-    button: {
-        height: 50,
-        width: 80,
-        backgroundColor: '#0288D1',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 5,
-        marginTop: 10,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    addButton: {
-        height: 50,
-        width: 150,
-        backgroundColor: '#4CAF50',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 5,
-        marginTop: 10,
-    },
-   
-    container: {
-        flexDirection: 'row',
-        padding: 15,
-        marginVertical: 8,
-        marginHorizontal: 10,
-        borderRadius: 5,
-        backgroundColor: '#f9f9f9',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-    },
-   
-    innerContainer: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    itemHeading: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    additionalInput: {
-        width: '100%',
-        minHeight: 100,
-        color:'#000000',
-        backgroundColor: '#fff',
-        paddingTop:15
-    },
-    speakButton: {
-        marginTop: 10,
-        padding: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    msg:{
-        flexDirection:"row",
-        justifyContent:'center'
-    },
-    btn:{
-        marginBottom:10,
-        marginRight:-3,
-        gap:8,
-        flexDirection:'row'
-    }
+
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  Headings: {
+    flexDirection: 'row',
+    padding: 20,
+    width: '100%',
+    justifyContent: 'space-evenly',
+    alignItems: 'center'
+
+  },
+  Heading: {
+    fontSize: 15,
+    fontWeight: 'bold',
+
+  },
+  inputContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    marginBottom: 10,
+    borderColor: '#888',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginTop: 20,
+    marginBottom: 20,
+    backgroundColor: '#fff',
+  },
+  input: {
+    flex: 1,
+    height: 50,
+    borderColor: '#888',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginRight: 10,
+    color: '#000',
+
+  },
+
+  button: {
+    height: 50,
+    width: 80,
+    backgroundColor: '#0288D1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  addButton: {
+    height: 50,
+    width: 150,
+    backgroundColor: '#4CAF50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginTop: 10,
+  },
+
+  container: {
+    alignSelf: 'center',
+    width: '80%',
+    flexDirection: 'row',
+    padding: 15,
+    marginVertical: 8,
+    marginHorizontal: 10,
+    borderRadius: 15,
+    backgroundColor: 'white',
+    elevation: 6,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    borderWidth: 1,
+    borderColor: 'black',
+  },
+
+  innerContainer: {
+    width: '100%',
+    justifyContent: 'center',
+  },
+  itemHeading: {
+    alignSelf: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  additionalInput: {
+    width: '100%',
+    minHeight: 100,
+    color: '#000000',
+    backgroundColor: '#fff',
+    paddingTop: 15
+  },
+  speakButton: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  msg: {
+    flexDirection: "row",
+    justifyContent: 'center'
+  },
+  btn: {
+    marginBottom: 10,
+    marginRight: -3,
+    gap: 8,
+    flexDirection: 'row'
+  }
 });

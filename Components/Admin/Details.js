@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { TextInput, StyleSheet, Pressable, ScrollView, Alert, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { UpdateCword } from "../../utils/actions-proverbs/Cultural_words";
 
 const Details = ({ route }) => {
-    const { item } = route.params || {}; // Safeguard against missing item
+    const { item } = route.params || {};
     const [headings, setHeadings] = useState(item.headings || []);
-    const [currentHeading, setCurrentHeading] = useState('');
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -16,24 +15,19 @@ const Details = ({ route }) => {
         }
     }, [item, navigation]);
 
+    const handleHeadingChange = (text, index) => {
+        const updatedHeadings = [...headings];
+        updatedHeadings[index] = text;
+        setHeadings(updatedHeadings);
+    };
+
     const handleUpdate = async () => {
         try {
             await UpdateCword(item.id, headings, navigation);
+            Alert.alert('Success', 'Cultural word updated successfully.');
         } catch (error) {
             alert(error.message);
         }
-    };
-
-    const addHeading = () => {
-        if (currentHeading.trim().length > 0) {
-            setHeadings([...headings, currentHeading]);
-            setCurrentHeading('');
-        }
-    };
-
-    const removeHeading = (index) => {
-        const updatedHeadings = headings.filter((_, i) => i !== index);
-        setHeadings(updatedHeadings);
     };
 
     const handleCancel = () => {
@@ -43,27 +37,19 @@ const Details = ({ route }) => {
     return (
         <ScrollView contentContainerStyle={styles.formContainer}>
             {headings.map((heading, index) => (
-                <View key={index} style={styles.headingContainer}>
-                    <Text style={styles.headingText}>{heading}</Text>
-                    <TouchableOpacity onPress={() => removeHeading(index)}>
-                        <Text style={styles.removeText}>Remove</Text>
-                    </TouchableOpacity>
-                </View>
+                <TextInput
+                    key={index}
+                    style={styles.textField}
+                    placeholder='Update heading'
+                    onChangeText={(text) => handleHeadingChange(text, index)}
+                    value={heading}
+                />
             ))}
-            <TextInput
-                style={styles.textField}
-                placeholder='Add new heading'
-                onChangeText={(text) => setCurrentHeading(text)}
-                value={currentHeading}
-            />
-            <Pressable style={styles.buttonAdd} onPress={addHeading}>
-                <Text style={styles.buttonText}>Add Heading</Text>
-            </Pressable>
             <Pressable style={styles.buttonUpdate} onPress={handleUpdate}>
-                <Text style={styles.buttonText}>Update</Text>
+                <Text style={styles.buttonTextd}>Update</Text>
             </Pressable>
             <Pressable style={styles.buttonCancel} onPress={handleCancel}>
-                <Text style={styles.buttonText}>Cancel</Text>
+                <Text style={styles.buttonTextc}>Cancel</Text>
             </Pressable>
         </ScrollView>
     );
@@ -90,53 +76,33 @@ const styles = StyleSheet.create({
         color: '#000',
         backgroundColor: '#fff',
     },
-    buttonAdd: {
-        width: '100%',
-        height: 50,
-        backgroundColor: '#4CAF50',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 5,
-        marginBottom: 10,
-    },
     buttonUpdate: {
-        width: '100%',
+        width: '70%',
         height: 50,
-        backgroundColor: '#0288D1',
+        borderColor: 'blue',
+        borderWidth: 3,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 5,
+        borderRadius: 10,
         marginBottom: 10,
     },
     buttonCancel: {
-        width: '100%',
+        width: '70%',
         height: 50,
-        backgroundColor: '#f44336',
+        borderColor: 'red',
+        borderWidth: 3,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 5,
+        borderRadius: 10,
     },
-    buttonText: {
-        color: '#fff',
+    buttonTextd: {
+        color: 'blue',
         fontSize: 16,
         fontWeight: 'bold',
     },
-    headingContainer: {
-        backgroundColor: 'white',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        padding: 10,
-        borderBottomColor: '#ccc',
-        borderBottomWidth: 1,
-        marginBottom: 10,
-    },
-    headingText: {
-        fontSize: 16,
-        color: '#333',
-    },
-    removeText: {
+    buttonTextc: {
         color: 'red',
         fontSize: 16,
+        fontWeight: 'bold',
     },
 });

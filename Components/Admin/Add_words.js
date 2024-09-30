@@ -1,78 +1,105 @@
 import React, { useState } from "react";
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, Keyboard } from "react-native";
-import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 import { AddCWord } from "../../utils/actions-proverbs/Cultural_words";
 
 export default Add_words = () => {
-    const [inputs, setInputs] = useState(['']);
+    const [input1, setInput1] = useState('');
+    const [input2, setInput2] = useState('');
+    const [input3, setInput3] = useState('');
+    const [input4, setInput4] = useState('');
     const navigation = useNavigation();
 
-    const handleInputChange = (text, index) => {
-        const newInputs = [...inputs];
-        newInputs[index] = text;
-        setInputs(newInputs);
-    };
-
-    const removeInputField = (index) => {
-        if (inputs.length > 1) {
-            const newInputs = inputs.filter((_, i) => i !== index);
-            setInputs(newInputs);
-        } else {
-            alert('You need at least one input field.');
-        }
-    };
-
-    const addInputField = () => {
-        setInputs([...inputs, '']);
-    };
-
     const addCulturalWord = async () => {
-        const nonEmptyInputs = inputs.filter(input => input.trim().length > 0);
-        if (nonEmptyInputs.length > 0) {
-            try {
-                // Call AddCWord and wait for it to return the new cultural word
-                const newTodo = await AddCWord(nonEmptyInputs);
-                
-                // Reset the inputs and navigate to the Details screen
-                setInputs(['']);
-                Keyboard.dismiss();
-                navigation.navigate('Details', { item: newTodo });
+        const inputs = [input1, input2, input3, input4].filter(input => input.trim().length > 0);
 
-                alert('Cultural words added successfully!');
+        if (inputs.length > 0) {
+            try {
+                const newTodo = await AddCWord(inputs);
+                setInput1('');
+                setInput2('');
+                setInput3('');
+                setInput4('');
+                Keyboard.dismiss();
+                navigation.navigate('Edit_words', { item: newTodo });
+
+                Toast.show({
+                    type: 'success',
+                    text1: 'Success',
+                    text2: 'Cultural words added successfully!'
+                });
             } catch (error) {
                 console.error('Error adding cultural word:', error);
-                alert('Error adding cultural word: ' + error.message);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: `Error adding cultural word: ${error.message}`
+                });
             }
         } else {
-            alert('Please enter at least one non-empty input.');
+            Toast.show({
+                type: 'error',
+                text1: 'Input Error',
+                text2: 'Please enter at least one non-empty input.'
+            });
         }
     };
 
     return (
         <View style={styles.PageContainer}>
-            {inputs.map((input, index) => (
-                <View key={index} style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder='Add New Cultural Word'
-                        placeholderTextColor='#aaaaaa'
-                        onChangeText={(text) => handleInputChange(text, index)}
-                        value={input}
-                        underlineColorAndroid='transparent'
-                        autoCapitalize='none'
-                    />
-                    <TouchableOpacity onPress={() => removeInputField(index)}>
-                        <FontAwesome name='trash' color='red' style={styles.removeIcon} />
-                    </TouchableOpacity>
-                </View>
-            ))}
-            <TouchableOpacity style={styles.addButton} onPress={addInputField}>
-                <Text style={styles.addButtonText}>Add Input Field</Text>
-            </TouchableOpacity>
+            <Text style={styles.label}>Related English word</Text>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder='Enter English word'
+                    placeholderTextColor='#aaaaaa'
+                    onChangeText={setInput1}
+                    value={input1}
+                    underlineColorAndroid='transparent'
+                    autoCapitalize='none'
+                />
+            </View>
+            <Text style={styles.label}>Translation meaning</Text>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder='Enter translation meaning'
+                    placeholderTextColor='#aaaaaa'
+                    onChangeText={setInput2}
+                    value={input2}
+                    underlineColorAndroid='transparent'
+                    autoCapitalize='none'
+                />
+            </View>
+            <Text style={styles.label}>Cultural meaning</Text>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder='Enter cultural meaning'
+                    placeholderTextColor='#aaaaaa'
+                    onChangeText={setInput3}
+                    value={input3}
+                    underlineColorAndroid='transparent'
+                    autoCapitalize='none'
+                />
+            </View>
+            <Text style={styles.label}>Province</Text>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder='Enter Province '
+                    placeholderTextColor='#aaaaaa'
+                    onChangeText={setInput4}
+                    value={input4}
+                    underlineColorAndroid='transparent'
+                    autoCapitalize='none'
+                />
+            </View>
             <TouchableOpacity style={styles.button} onPress={addCulturalWord}>
                 <Text style={styles.buttonText}>Add</Text>
             </TouchableOpacity>
+            <Toast />
         </View>
     );
 };
@@ -81,10 +108,17 @@ const styles = StyleSheet.create({
     PageContainer: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: '#bfdad9',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
+    },
+    label: {
+        alignSelf: 'center',
+        marginTop: 10,
+        marginBottom: 0,
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
     },
     inputContainer: {
         flexDirection: 'row',
@@ -106,34 +140,17 @@ const styles = StyleSheet.create({
     },
     button: {
         height: 50,
-        width: 80,
-        backgroundColor: '#0288D1',
+        width: '70%',
+        borderColor: 'blue',
+        borderWidth: 3,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 5,
+        borderRadius: 10,
         marginTop: 10,
     },
     buttonText: {
-        color: '#fff',
+        color: 'blue',
         fontSize: 16,
         fontWeight: 'bold',
-    },
-    addButton: {
-        height: 50,
-        width: 150,
-        backgroundColor: '#4CAF50',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 5,
-        marginTop: 10,
-    },
-    addButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    removeIcon: {
-        fontSize: 24,
-        marginLeft: 10,
-    },
+    }
 });
