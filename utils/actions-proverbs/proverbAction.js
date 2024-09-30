@@ -93,11 +93,9 @@ export const deleteProverb = async (proverbId) => {
     const app = getFirebaseApp();
     const db = getDatabase(app);
     const proverbsRef = ref(db, 'proverbs');
-  
-    // Create an array to store results from different queries
+ 
     let results = [];
-  
-    // Query by Sinhalese Proverb
+
     const sinhaleseQuery = query(
       proverbsRef,
       orderByChild('sinhaleseProverb'),
@@ -113,7 +111,6 @@ export const deleteProverb = async (proverbId) => {
       })));
     }
   
-    // Query by Singlish Meaning
     const singlishQuery = query(
       proverbsRef,
       orderByChild('singlishMeaning'),
@@ -129,7 +126,6 @@ export const deleteProverb = async (proverbId) => {
       })));
     }
   
-    // Query by English Translation
     const englishQuery = query(
       proverbsRef,
       orderByChild('englishTranslation'),
@@ -145,7 +141,6 @@ export const deleteProverb = async (proverbId) => {
       })));
     }
   
-    // Remove duplicate results based on 'id'
     const uniqueResults = Array.from(new Set(results.map(a => a.id)))
       .map(id => {
         return results.find(a => a.id === id);
