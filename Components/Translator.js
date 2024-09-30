@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: "center",
     alignItems: "center",
+    
   },
   Headings: {
     flexDirection: "row",
@@ -185,6 +186,7 @@ const styles = StyleSheet.create({
     width: 400,
     justifyContent: "space-evenly",
     alignItems: "center",
+
   },
   Heading: {
     fontSize: 15,
@@ -195,6 +197,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-end",
     borderColor: "#888",
+
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
@@ -211,6 +214,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     color: "#000",
   },
+
   button: {
     height: 50,
     width: 80,
@@ -247,13 +251,17 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
+    borderWidth: 1,
+    borderColor: 'black',
   },
 
   innerContainer: {
     flex: 1,
     justifyContent: "center",
+
   },
   itemHeading: {
+    alignSelf: 'center',
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
@@ -265,12 +273,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 15,
   },
-
   speakButton: {
     marginTop: 10,
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
+
   },
   btn: {
     marginBottom: 10,
