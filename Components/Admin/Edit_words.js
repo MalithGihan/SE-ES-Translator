@@ -1,38 +1,45 @@
-import { View, Text,  FlatList, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
-import { RetrieveAllCWords, DeleteCword  } from '../../utils/actions-proverbs/Cultural_words'; 
+import { RetrieveAllCWords, DeleteCword } from '../../utils/actions-proverbs/Cultural_words';
 import debounce from 'lodash.debounce';
 import { FontAwesome } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Edit_words({ navigation }) {
   const [words, setWords] = useState([]);
   const [filteredWords, setFilteredWords] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const fetchWords = async () => {
-      try {
-        const data = await RetrieveAllCWords();
-        const wordsList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-        wordsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setWords(wordsList);
-        setFilteredWords(wordsList);
-      } catch (error) {
-        console.error('Error fetching words:', error);
-      }
-    };
+  const fetchWords = async () => {
+    try {
+      const data = await RetrieveAllCWords();
+      const wordsList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+      wordsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setWords(wordsList);
+      setFilteredWords(wordsList);
+    } catch (error) {
+      console.error('Error fetching words:', error);
+    }
+  };
 
-    fetchWords();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchWords();
+    }, [])
+  );
 
-  const debouncedFilterWords = useCallback(debounce(() => {
-    const filtered = words.filter(word => {
-      return searchQuery
-        ? word.headings.some(heading => heading.toLowerCase().includes(searchQuery.toLowerCase()))
-        : true;
-    });
-    setFilteredWords(filtered);
-  }, 300), [words, searchQuery]);
+  const debouncedFilterWords = useCallback(
+    debounce(() => {
+      const filtered = words.filter(word => {
+        return searchQuery
+          ? word.headings.some(heading => heading.toLowerCase().includes(searchQuery.toLowerCase()))
+          : true;
+      });
+      setFilteredWords(filtered);
+    }, 300),
+    [words, searchQuery]
+  );
 
   useEffect(() => {
     debouncedFilterWords();
@@ -88,7 +95,9 @@ export default function Edit_words({ navigation }) {
           </TouchableOpacity>
         )}
       />
-     
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddWord')}>
+        <Ionicons name="add-circle-outline" size={50} color="white" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -132,25 +141,28 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
-  editContainer: {
-    marginTop: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 8,
-    marginBottom: 10,
-  },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  editButton: {
-    marginRight: 15,
-    fontSize: 16,
-    color: '#007BFF',
-  },
   deletebtn: {
     fontSize: 24,
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'rgba(0, 0, 255, 0.6)',
+    borderRadius: 50,
+    padding: 1,
+    elevation: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 5,
   },
 });

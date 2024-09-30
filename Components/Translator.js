@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Pressable, TextInput, StyleSheet, Alert } from 'react-native';
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -138,9 +138,6 @@ export default Translator = () => {
           </TouchableOpacity>
         </View>
       </View>
-
-
-
     </View>
   );
 }
@@ -149,13 +146,14 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#bfdad9',
-    alignItems: 'center',
-    minHeight: 800
+    alignSelf: 'center',
+    marginHorizontal: -30
+
   },
   formContainer: {
     flexDirection: 'column',
-    padding: 10,
+    paddingHorizontal: 0,
+
 
     justifyContent: 'center',
     alignItems: 'center',
@@ -163,7 +161,7 @@ const styles = StyleSheet.create({
   Headings: {
     flexDirection: 'row',
     padding: 20,
-    width: 400,
+    width: '100%',
     justifyContent: 'space-evenly',
     alignItems: 'center'
 
@@ -174,7 +172,7 @@ const styles = StyleSheet.create({
 
   },
   inputContainer: {
-    width: 400,
+    width: '100%',
     flexDirection: 'column',
     alignItems: 'flex-end',
     marginBottom: 10,
@@ -197,6 +195,7 @@ const styles = StyleSheet.create({
     color: '#000',
 
   },
+
   button: {
     height: 50,
     width: 80,
@@ -222,24 +221,29 @@ const styles = StyleSheet.create({
   },
 
   container: {
+    alignSelf: 'center',
+    width: '80%',
     flexDirection: 'row',
     padding: 15,
     marginVertical: 8,
     marginHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: '#f9f9f9',
-    elevation: 2,
-    shadowColor: '#000',
+    borderRadius: 15,
+    backgroundColor: 'white',
+    elevation: 6,
+    shadowColor: 'black',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
+    borderWidth: 1,
+    borderColor: 'black',
   },
 
   innerContainer: {
-    flex: 1,
+    width: '100%',
     justifyContent: 'center',
   },
   itemHeading: {
+    alignSelf: 'center',
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
@@ -251,14 +255,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingTop: 15
   },
-
   speakButton: {
     marginTop: 10,
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
-  }
-  , btn: {
+  },
+  msg: {
+    flexDirection: "row",
+    justifyContent: 'center'
+  },
+  btn: {
     marginBottom: 10,
     marginRight: -3,
     gap: 8,
