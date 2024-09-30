@@ -15,6 +15,7 @@ import * as Speech from "expo-speech";
 import * as Clipboard from "expo-clipboard";
 import { ThemeContext } from "./SettingsContext";
 
+
 export default Translator = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
