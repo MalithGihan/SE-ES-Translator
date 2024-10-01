@@ -72,10 +72,10 @@ const SignUp = () => {
   },[error])
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <ScrollView style={{ flex: 1, backgroundColor: 'white', padding: 16 }}>
-        <Text style={{color:'black',fontSize:17,fontWeight:'700',marginBottom:2}}>Sign Up</Text>
-        <Text style={{color:'black',fontSize:15,fontWeight:'400'}}>Signup now for free and start learning, and explore language.</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+      <ScrollView style={{ flex: 1, backgroundColor: 'black', padding: 16 }}>
+        <Text style={{color:'white',fontSize:37,fontWeight:'700',marginVertical:10,marginTop:100}}>Sign Up</Text>
+        <Text style={{color:'white',fontSize:15,fontWeight:'400'}}>Signup now for free and start learning, and explore language.</Text>
         <View style={{marginVertical:22}}>
           <CustomInput 
             id="fullName" 
@@ -105,15 +105,15 @@ const SignUp = () => {
             title='Sign Up'
             onPress={authHandler}
             isLoading={isLoading}
-            style={{ marginVertical: 8 }}
+            style={{ margin: 10, backgroundColor:'white' }}
           />
 
           <View style={styles.bottomConatiner}>
-            <Text style={{fontSize:12, color:'black'}}>
+            <Text style={{fontSize:12, color:'white'}}>
               Have an account already ?
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
-              <Text style={{fontSize:14,fontWeight:'800',color:'black'}}>
+              <Text style={{fontSize:14,fontWeight:'800',color:'white'}}>
                 {" "}Sign In
               </Text>
             </TouchableOpacity>
@@ -126,7 +126,7 @@ const SignUp = () => {
              <CommonNavBtn 
              title='Home'
              onPress={() => navigation.navigate("Home")}
-             style={{ marginVertical: 8 }}
+             style={{ margin: 15,backgroundColor:'white' }}
           />
        </View>
     </SafeAreaView>
@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
     marginVertical: 4
   },
   centeredButton: {
-    flex: 1,
     bottom : 10,
     left : 10,
     justifyContent: 'flex-end',

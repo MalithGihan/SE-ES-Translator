@@ -8,28 +8,35 @@ export default Welcome = () => {
   const navigation = useNavigation();
   return (
     <View  style={styles.background}>
-      
-        {/* <Image source={images} resizeMode='contain' style={styles.logo} /> */}
+      <View style={styles.middle}>
         <Text style={styles.title}>Welcome</Text>
         <Text style={styles.subtitle}>Learn new things.Stay focused.</Text>
-        <Text style={styles.subtitle}>Sinhala Translator</Text>
+        <Text style={styles.subtitle2}>A Sinhala Translator</Text>
         <View style={{marginTop:72}}>
            <CustomButton 
              title="Login with Email"
              onPress={()=> navigation.navigate("SignIn")}
-             style={styles.btn}
+             style={{ margin: 10, backgroundColor:'white' }}
            />
            <View style={styles.bottonContainer}>
-            <Text style={{fontSize:12, color:'black'}}>
+            <Text style={{fontSize:12, color:'white'}}>
               Don't have an account ?
             </Text>
             <TouchableOpacity onPress={()=> navigation.navigate("SignUp")}>
-               <Text style={{fontSize:14,fontWeight:'800',color:'black'}}>
+               <Text style={{fontSize:14,fontWeight:'800',color:'white'}}>
                   {" "}Sign Up
                </Text>
             </TouchableOpacity>
            </View>
         </View>
+        </View>
+        <View style={styles.centeredButton}>
+        <CommonNavBtn
+          title="Home"
+          onPress={() => navigation.navigate("Home")}
+          style={{ margin: 5, backgroundColor: "white" }}
+        />
+      </View>
     </View>
   )
 }
@@ -38,7 +45,12 @@ export default Welcome = () => {
 const styles = StyleSheet.create({
   background : {
     flex:1,
-    backgroundColor:'white',
+    backgroundColor:'black',
+   
+  },
+  middle:{
+    flex:1,
+    marginTop:10,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -47,21 +59,33 @@ const styles = StyleSheet.create({
   //  height: height*.8,
   // },
   title: {
-    color:'black',
-    fontSize: 30,
-    fontWeight:'500',
+    color:'white',
+    fontSize: 45,
+    fontWeight:'800',
     textTransform: 'uppercase',
-    marginBottom: 5
+    marginBottom: 10
   },
   subtitle: {
-    color: 'black',
-    fontSize: 12,
+    color: 'white',
+    fontSize: 10,
     fontWeight:'400',
+    marginBottom:20
+  },
+  subtitle2: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight:'500',
   },
   bottonContainer:{
     flexDirection:'row',
     alignItems:'center',
     justifyContent: 'center',
     marginVertical:12
-  }
+  },
+  centeredButton: {
+    bottom: 10,
+    left: 10,
+    justifyContent: "flex-end",
+    alignItems: "baseline",
+  },
 })
