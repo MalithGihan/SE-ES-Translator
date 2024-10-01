@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -23,7 +23,7 @@ export default Translator = () => {
   const [translatedtext, settranslatedtext] = useState("");
   const [fromLang, setFromLang] = useState("en");
   const [toLang, setToLang] = useState("si");
-  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+  const { isDarkMode } = useContext(ThemeContext);
 
   const onSubmit = async () => {
     try {
@@ -36,8 +36,7 @@ export default Translator = () => {
           from: fromLang,
         },
         headers: {
-          "x-rapidapi-key":
-            "4e1aa0bf4emsh14488fc7aa3851ap1a384ejsn2d1c01fccbd3",
+          "x-rapidapi-key": "your-rapidapi-key-here",
           "x-rapidapi-host": "nlp-translation.p.rapidapi.com",
         },
       });
@@ -73,30 +72,58 @@ export default Translator = () => {
   };
 
   return (
-    <View style={[styles.page,{
-      backgroundColor: isDarkMode ? "black" : "#fff",
-      color: isDarkMode ? "white" : "black",
-    },]}>
+    <View
+      style={[
+        styles.page,
+        {
+          backgroundColor: isDarkMode ? "black" : "#fff",
+          color: isDarkMode ? "white" : "black",
+        },
+      ]}
+    >
       {loading && <Text></Text>}
       {error && <Text>Error: {error}</Text>}
       <View style={styles.formContainer}>
+        <Text
+          style={[styles.header, { color: isDarkMode ? "white" : "black" }]}
+        >
+          Profile
+        </Text>
         <View style={styles.Headings}>
-          <Text style={[styles.Heading, { color: isDarkMode ? "white" : "black" }]}>
+          <Text
+            style={[styles.Heading, { color: isDarkMode ? "white" : "black" }]}
+          >
             {fromLang === "en" ? "English" : "Sinhala"}
           </Text>
           <Pressable onPress={swapLanguages}>
-            <AntDesign name="swap" size={24} color={isDarkMode ? "white" : "black"} />
+            <AntDesign
+              name="swap"
+              size={24}
+              color={isDarkMode ? "white" : "black"}
+            />
           </Pressable>
-          <Text style={[styles.Heading, { color: isDarkMode ? "white" : "black" }]}>
+          <Text
+            style={[styles.Heading, { color: isDarkMode ? "white" : "black" }]}
+          >
             {toLang === "si" ? "Sinhala" : "English"}
           </Text>
         </View>
-        <View style={[styles.inputContainer,{backgroundColor: isDarkMode ? "black" : "#fff",
-      borderColor: isDarkMode ? "white" : "black"},]}>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              backgroundColor: isDarkMode ? "black" : "#fff",
+              borderColor: isDarkMode ? "white" : "black",
+            },
+          ]}
+        >
           <TextInput
-            style={[styles.additionalInput, {
-              backgroundColor: isDarkMode ? "black" : "#fff"
-            },]}
+            style={[
+              styles.additionalInput,
+              {
+                backgroundColor: isDarkMode ? "black" : "#fff",
+              },
+            ]}
             placeholder="Enter Text"
             placeholderTextColor="#aaaaaa"
             onChangeText={setenteredtext}
@@ -115,7 +142,7 @@ export default Translator = () => {
               <Ionicons
                 name="send"
                 size={24}
-                color={enteredtext ? "#0288D1" : "#aaaaaa"}
+                color={enteredtext ? "white" : "#aaaaaa"}
               />
             </TouchableOpacity>
             {toLang !== "en" && (
@@ -127,18 +154,37 @@ export default Translator = () => {
                 <AntDesign
                   name="sound"
                   size={24}
-                  color={translatedtext ? (isDarkMode ? "white" : "#0288D1") : (isDarkMode ? "#aaaaaa" : "black")} 
+                  color={
+                    translatedtext
+                      ? isDarkMode
+                        ? "white"
+                        : "#0288D1"
+                      : isDarkMode
+                      ? "#aaaaaa"
+                      : "black"
+                  }
                 />
               </TouchableOpacity>
             )}
           </View>
         </View>
-        <View style={[styles.inputContainer,{backgroundColor: isDarkMode ? "black" : "#fff",
-      borderColor: isDarkMode ? "white" : "black"},]}>
+
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              backgroundColor: isDarkMode ? "black" : "#fff",
+              borderColor: isDarkMode ? "white" : "black",
+            },
+          ]}
+        >
           <TextInput
-            style={[styles.additionalInput, {
-              backgroundColor: isDarkMode ? "black" : "#fff"
-            },]}
+            style={[
+              styles.additionalInput,
+              {
+                backgroundColor: isDarkMode ? "black" : "#fff",
+              },
+            ]}
             placeholder="Translation"
             placeholderTextColor="#aaaaaa"
             onChangeText={settranslatedtext}
@@ -149,17 +195,27 @@ export default Translator = () => {
             multiline={true}
             textAlignVertical="top"
           />
+          <View  style={styles.btn2}>
           <TouchableOpacity
             style={styles.speakButton}
             onPress={copyToClipboard}
             disabled={!translatedtext}
-          >
+          >   
             <AntDesign
               name="copy1"
-              size={24}
-              color={translatedtext ? (isDarkMode ? "white" : "#0288D1") : (isDarkMode ? "#aaaaaa" : "black")} 
-            />
+              size={24}     
+              color={
+                translatedtext
+                  ? isDarkMode
+                    ? "white"
+                    : "#0288D1"
+                  : isDarkMode
+                  ? "#aaaaaa"
+                  : "black"
+              }
+            />   
           </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -169,121 +225,61 @@ export default Translator = () => {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    flexDirection: "column",
     alignItems: "center",
     width: "100%",
   },
   formContainer: {
-    flexDirection: "column",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    
+    width: "100%",
+    paddingHorizontal: 15 
+  },
+  header: {
+    fontSize: 25,
+    textAlign: "left",
+    marginLeft: 5,
+    fontWeight: "bold",
   },
   Headings: {
     flexDirection: "row",
     padding: 20,
-    width: 400,
+    width: "100%", 
     justifyContent: "space-evenly",
     alignItems: "center",
-
   },
   Heading: {
-    fontSize: 15,
-    fontWeight: "bold",
-  },
-  inputContainer: {
-    width: 400,
-    flexDirection: "column",
-    alignItems: "flex-end",
-    borderColor: "#888",
-
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    margin: 10,
-    backgroundColor: "#fff",
-  },
-  input: {
-    flex: 1,
-    height: 50,
-    borderColor: "#888",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginRight: 10,
-    color: "#000",
-  },
-
-  button: {
-    height: 50,
-    width: 80,
-    backgroundColor: "#0288D1",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
-  addButton: {
-    height: 50,
-    width: 150,
-    backgroundColor: "#4CAF50",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 5,
-    marginTop: 10,
-  },
-
-  container: {
-    flexDirection: "row",
-    padding: 15,
-    marginVertical: 8,
-    marginHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: "#f9f9f9",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    borderWidth: 1,
-    borderColor: 'black',
-  },
-
-  innerContainer: {
-    flex: 1,
-    justifyContent: "center",
-
-  },
-  itemHeading: {
-    alignSelf: 'center',
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
+  inputContainer: {
+    width: "100%",
+    borderWidth: 2,
+    borderRadius: 15,
+    marginBottom: 15,
+    marginVertical:10
   },
   additionalInput: {
     width: "100%",
     minHeight: 100,
-    color: "#000000",
-    backgroundColor: "#fff",
-    paddingTop: 15,
+    borderRadius: 15,
+    padding: 10,
   },
   speakButton: {
     marginTop: 10,
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-
   },
   btn: {
     marginBottom: 10,
-    marginRight: -3,
     gap: 8,
+    paddingHorizontal:10,
     flexDirection: "row",
+    justifyContent:'flex-end'
+  },
+  btn2: {
+    marginBottom: 10,
+    gap: 8,
+    paddingHorizontal:10,
+    flexDirection: "row",
+    justifyContent:'flex-end'
   },
 });

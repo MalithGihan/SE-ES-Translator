@@ -24,13 +24,13 @@ const styles = StyleSheet.create({
 
     image : {
         flex : 0.7,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     title: {
         fontWeight :'800',
         fontSize: 28,
         marginBottom: 10,
-        color : '#493d8a',
+        color : 'black',
         textAlign: 'center'
     },
     description : {

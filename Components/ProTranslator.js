@@ -6,7 +6,6 @@ import {
   Text,
   Pressable,
   TouchableOpacity,
-  Alert,
   FlatList,
 } from "react-native";
 import { getProverbs } from "../utils/actions-proverbs/proverbAction";
@@ -183,12 +182,11 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: "90%",
     alignItems: "stretch",
-    margin: 20,
+    marginHorizontal: 5,
     alignSelf: "center",
   },
   formContainer: {
     flexDirection: "column",
-    padding: 0,
     justifyContent: "center",
     width: "100%",
     alignItems: "stretch",

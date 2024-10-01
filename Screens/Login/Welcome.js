@@ -1,8 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Image } from 'react-native'
-import images1 from '../../assets/images/1975189.png'
-import images2 from '../../assets/images/Screenshot 2024-09-05 001429.png'
 import CustomButton from './CustomButton'
 import { useNavigation } from "@react-navigation/native";
 
