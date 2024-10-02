@@ -14,6 +14,7 @@ import { store } from "./store/store";
 import HomeUser from "./Screens/HomeUser";
 import HomeAdmin from "./Screens/HomeAdmin";
 import { SettingsProvider } from "./Components/SettingsContext";
+import Appintro from "./Components/Appintro";
 
 const Stack = createStackNavigator();
 
@@ -38,6 +39,7 @@ const MainStack = () => (
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="HomeUser" component={HomeUser} />
       <Stack.Screen name="HomeAdmin" component={HomeAdmin} />
+      <Stack.Screen name="Appintro" component={Appintro} />
     </Stack.Navigator>
   </Provider>
 );

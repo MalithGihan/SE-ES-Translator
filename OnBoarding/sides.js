@@ -1,26 +1,27 @@
 export default [
     {
         id : '1',
-        title : 'Quick a Easy Access',
-        description : 'Grow your lanuage knowlage by using new translaor view',
-        image : require ('../assets/images/undraw_in_no_time_6igu.png'),
+        title : 'Quick & Easy Translations Description',
+        description : 'Translate Sinhala and English effortlessly. From simple words to complete sentences, get fast, accurate translations',
+        image : require ('../assets/images/undraw_quick_chat_re_bit5.png'),
     },
     {
         id : '2',
-        title : 'Smart place to be Smart',
-        description : 'Grow your lanuage knowlage by using new translaor view',
-        image : require ('../assets/images/undraw_Instant_analysis_re_mid5.png'),
+        title : 'Explore Culture Description',
+        description : 'Learn the meaning behind Sinhala proverbs and cultural phrases with our special dictionary feature',
+        image : require ('../assets/images/undraw_Notebook_re_id0r.png'),
     },
     {
         id : '3',
-        title : 'Instant Notification',
-        description : 'Grow your lanuage knowlage by using new translaor view',
-        image : require ('../assets/images/undraw_Personalization_re_grty.png'),
+        title : 'Learn & Translate Quickly Description',
+        description : 'Test your language skills with quick quizzes, or translate between Sinhala and English instantly',
+        image : require ('../assets/images/undraw_road_to_knowledge_m8s0.png'),
     },
     {
-        id : '4',
-        title : 'Customize Everything',
-        description : 'Grow your lanuage knowlage by using new translaor view',
-        image : require ('../assets/images/undraw_Smart_resize_re_q4mo.png'),
+        id: '4',
+        title: 'Welcome to Thumbapanni',
+        description: 'A Translator\n\nසුවිශේෂී අක්ෂර මාලාවක් සහිත ගාම්බීර ශ්‍රී ලංකා භාෂාව පිළිබඳ සොයා බලන්න.',
+        image: require('../assets/images/blck logo2.png'),
     }
+    
 ]

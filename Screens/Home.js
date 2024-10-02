@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Pressable,
   TextInput,
+  Image
 } from "react-native";
 import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -30,6 +31,9 @@ export default function Home() {
   const clearOnboarding = async () => {
     try {
       await AsyncStorage.removeItem("@viewedOnboarding");
+
+      console.log("Meka wada")
+
       Alert.alert(
         language === "en" ? "Onboarding cleared" : "ඔබගේ මූලික පිටු මකා ඇත",
         language === "en"
@@ -106,15 +110,23 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.leftCorner}>
-        <Text style={styles.text}>{language === "en" ? "Home" : "මුල් පිටුව "}</Text>
-      </View>
+    
+      <Image 
+          source={require('../assets/images/Untitled-1.png')} 
+          style={styles.leftCorner}
+          resizeMode="contain" 
+        />
+
 
       <View style={styles.rightCorner}>
         <CommonNavBtn
           title={language === "en" ? "Sign In" : "ඇතුල් වන්න"}
           onPress={() => navigation.navigate("Welcome")}
-          style={{ marginVertical: 6 }}
+          style={{
+            marginHorizontal: 8,
+            backgroundColor: "white",
+            borderColor: "white",
+          }}
         />
       </View>
 
@@ -126,7 +138,7 @@ export default function Home() {
             {fromLang === "en" ? "English" : "සිංහල "}
           </Text>
           <Pressable onPress={swapLanguages}>
-            <AntDesign name="swap" size={24} color="black" />
+            <AntDesign name="swap" size={24} color="white" />
           </Pressable>
           <Text style={styles.Heading}>
             {toLang === "si" ? "සිංහල " : "English"}
@@ -154,7 +166,7 @@ export default function Home() {
                 <Ionicons
                   name="send"
                   size={24}
-                  color={enteredtext ? "#0288D1" : "#aaaaaa"}
+                  color={enteredtext ? "#fff" : "#aaaaaa"}
                 />
               </TouchableOpacity>
               {toLang !== "en" && (
@@ -166,7 +178,7 @@ export default function Home() {
                   <AntDesign
                     name="sound"
                     size={24}
-                    color={enteredtext ? "#0288D1" : "#aaaaaa"}
+                    color={enteredtext ? "#fff" : "#aaaaaa"}
                   />
                 </TouchableOpacity>
               )}
@@ -193,29 +205,39 @@ export default function Home() {
               <AntDesign
                 name="copy1"
                 size={24}
-                color={translatedtext ? "#0288D1" : "#aaaaaa"}
+                color={translatedtext ? "#fff" : "#aaaaaa"}
               />
             </TouchableOpacity>
           </View>
         </View>
       </View>
 
+      <View style={styles.buttom}>
       <View style={styles.centeredButton}>
         <CommonNavBtn
           title={
             language === "en" ? "Clear Onboarding" : "මුලික වින්‍යාස ඉවත් කරන්න"
           }
           onPress={clearOnboarding}
+          style={{ backgroundColor: "white", borderColor: "white" }}
         />
       </View>
+
       <View style={styles.centeredButton2}>
-        <TouchableOpacity onPress={toggleLanguage}>
+        <TouchableOpacity onPress={toggleLanguage} style={styles.botBtn}>
           {language === "en" ? (
-            <Ionicons name="language" size={24} color="black" />
+            <Ionicons name="language" size={24} color="white" />
           ) : (
-            <Ionicons name="globe-outline" size={24} color="black" />
+            <Ionicons name="globe-outline" size={24} color="white" />
           )}
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Appintro")}
+          style={styles.botBtn}
+        >
+          <AntDesign name="questioncircleo" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
       </View>
     </View>
   );
@@ -225,12 +247,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: "#000",
   },
   leftCorner: {
-    position: "absolute",
-    top: 20,
+    position:'relative',
     left: 20,
     zIndex: 1,
+    width:'30%',
+    height:'10%'
   },
   rightCorner: {
     position: "absolute",
@@ -238,22 +262,33 @@ const styles = StyleSheet.create({
     right: 10,
     zIndex: 1,
   },
+  buttom:{
+    flex:1,
+    flexDirection:'row',
+    justifyContent:'space-between',
+    marginHorizontal:10,
+    marginBottom:5
+  },
   centeredButton: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-start',
-    paddingBottom: 20,
-    paddingLeft: 20,
+    justifyContent: "flex-end",
+    alignItems: "flex-start",
+    bottom:10,
   },
   centeredButton2: {
+    flexDirection: "row",
+    justifyContent: "space-around",
     position: "absolute",
-    bottom: 35,
-    right: 40,
+    bottom: 10,
+    right:5
+  },
+  botBtn: {
+    marginLeft: 20,
   },
   text: {
     fontSize: 24,
     marginTop: 8,
     fontWeight: "bold",
+    color: "white",
   },
   formContainer: {
     padding: 10,
@@ -267,11 +302,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
-    marginTop: 50,
   },
   Heading: {
     fontSize: 16,
     fontWeight: "bold",
+    color: "white",
   },
   commenarea: {
     width: "100%",
@@ -283,12 +318,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginVertical: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#676767",
   },
   additionalInput: {
     width: "100%",
-    color: "#000000",
-    backgroundColor: "#fff",
+    color: "#fff",
+    backgroundColor: "#676767",
     paddingTop: 15,
   },
   paste: {
@@ -308,4 +343,10 @@ const styles = StyleSheet.create({
     gap: 8,
     justifyContent: "flex-end",
   },
+  logo:{
+    position: 'absolute', 
+    bottom: 0,             
+    left: 0,                      
+    opacity: 0.5,   
+   },
 });
