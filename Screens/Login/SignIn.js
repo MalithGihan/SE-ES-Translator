@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   Alert,
+  Image,
 } from "react-native";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -115,11 +116,11 @@ export default SignIn = () => {
             title="Sign In"
             onPress={authHandler}
             isLoading={isLoading}
-            style={{ margin: 10, backgroundColor: "white" }}
+            style={{ margin: 10, backgroundColor: "white",borderColor: "white"  }}
           />
           <View style={styles.bottomContainer}>
             <Text style={{ fontSize: 12, color: "white" }}>
-              Don't have an account?
+              Don't have an Account?
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
               <Text style={{ fontSize: 14, fontWeight: "800", color: "white" }}>
@@ -130,11 +131,16 @@ export default SignIn = () => {
           </View>
         </View>
       </ScrollView>
+      <Image
+        source={require("../../assets/images/Untitled-1.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <View style={styles.centeredButton}>
         <CommonNavBtn
           title="Home"
           onPress={() => navigation.navigate("Home")}
-          style={{ margin: 5, backgroundColor: "white" }}
+          style={{ backgroundColor: "white",borderColor: "white"  }}
         />
       </View>
     </View>
@@ -150,9 +156,18 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   centeredButton: {
-    bottom: 10,
-    left: 10,
     justifyContent: "flex-end",
     alignItems: "baseline",
+    bottom: 10,
+    left: 20,
+  },
+  logo: {
+    flex: -1,
+    width: "200%",
+    position: "absolute",
+    bottom: -70,
+    left: 20,
+    opacity: 0.5,
+    transform: [{ rotate: "2500deg" }],
   },
 });

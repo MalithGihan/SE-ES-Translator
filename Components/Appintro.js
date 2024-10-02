@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View,Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Appintro = () => {
@@ -29,11 +29,16 @@ const Appintro = () => {
           சிங்கள-ஆங்கில மொழிபெயர்ப்பாளருக்கு வரவேற்கிறோம்! இந்த பயன்பாடு சிங்களம் மற்றும் ஆங்கிலம் இடையே உரைகளை எளிதாக மொழிபெயர்க்க உதவுகிறது. பழமொழிகள் மற்றும் கலாச்சார சொற்றொடர்களைப் புரிந்துகொண்டு, நிதானமாக மொழிபெயர்க்கவும், தனிப்பயன் அமைப்புகளுடன் உங்கள் அனுபவத்தை மேம்படுத்தவும்.
         </Text>
       </View>
+      <Image 
+          source={require('../assets/images/Untitled-1.png')} 
+          style={styles.logo}
+          resizeMode="contain" 
+        />
       <View style={styles.centeredButton}>
              <CommonNavBtn 
              title='Home'
              onPress={() => navigation.navigate("Home")}
-             style={{margin: 10, backgroundColor:'white'}}
+             style={{margin: 5, backgroundColor:'white'}}
           />
        </View>
     </View>
@@ -48,6 +53,12 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'black', 
   },
+  logo:{
+    flex:1,
+    width:'60%',
+    height:'30%',
+    marginTop:20
+   },
   topic:{
     fontSize:30,
     fontWeight:'bold',
@@ -69,8 +80,6 @@ const styles = StyleSheet.create({
   },
   centeredButton: {
     flex: 1,
-    bottom : 0,
-    left : 0,
     justifyContent: 'flex-end',
     alignItems: 'baseline',
   },

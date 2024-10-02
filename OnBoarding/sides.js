@@ -18,9 +18,10 @@ export default [
         image : require ('../assets/images/undraw_road_to_knowledge_m8s0.png'),
     },
     {
-        id : '4',
-        title : 'Tailored Settings Description',
-        description : 'Switch between light and dark modes, and easily toggle between Sinhala and English for a personalized app experience',
-        image : require ('../assets/images/undraw_Explore_re_8l4v.png'),
+        id: '4',
+        title: 'Welcome to Thumbapanni',
+        description: 'A Translator\n\nසුවිශේෂී අක්ෂර මාලාවක් සහිත ගාම්බීර ශ්‍රී ලංකා භාෂාව පිළිබඳ සොයා බලන්න.',
+        image: require('../assets/images/blck logo2.png'),
     }
+    
 ]

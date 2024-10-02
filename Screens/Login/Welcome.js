@@ -9,9 +9,17 @@ export default Welcome = () => {
   return (
     <View  style={styles.background}>
       <View style={styles.middle}>
+      <Image 
+          source={require('../../assets/images/Untitled-1.png')} 
+          style={styles.logo}
+          resizeMode="contain" 
+        />
+        <View style={styles.text}>
         <Text style={styles.title}>Welcome</Text>
         <Text style={styles.subtitle}>Learn new things.Stay focused.</Text>
-        <Text style={styles.subtitle2}>A Sinhala Translator</Text>
+        <Text style={styles.subtitle2}>A Translator</Text>
+        </View>
+
         <View style={{marginTop:72}}>
            <CustomButton 
              title="Login with Email"
@@ -46,35 +54,41 @@ const styles = StyleSheet.create({
   background : {
     flex:1,
     backgroundColor:'black',
-   
   },
   middle:{
-    flex:1,
-    marginTop:10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
-  // logo:{
-  //  width: width*.8,
-  //  height: height*.8,
-  // },
+  logo:{
+   width:'50%',
+   height:'30%'
+  },
+  text:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign:'center'
+  },
   title: {
+    marginTop:30,
     color:'white',
-    fontSize: 45,
-    fontWeight:'800',
+    fontSize: 55,
+    fontWeight:'400',
     textTransform: 'uppercase',
-    marginBottom: 10
+    textAlign:'center'
   },
   subtitle: {
     color: 'white',
     fontSize: 10,
     fontWeight:'400',
-    marginBottom:20
+    marginBottom:100,
+    textAlign:'center'
   },
   subtitle2: {
     color: 'white',
     fontSize: 15,
     fontWeight:'500',
+    marginBottom:60,
+    textAlign:'center'
   },
   bottonContainer:{
     flexDirection:'row',
@@ -82,7 +96,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical:12
   },
+  logo:{
+   width:'50%',
+   height:'30%'
+  },
   centeredButton: {
+    flex:1,
     bottom: 10,
     left: 10,
     justifyContent: "flex-end",
