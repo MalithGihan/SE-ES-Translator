@@ -6,6 +6,7 @@ import {
   TextInput,
   StyleSheet,
   Alert,
+  Image,
 } from "react-native";
 import React, { useState, useContext } from "react";
 import axios from "axios";
@@ -14,7 +15,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Speech from "expo-speech";
 import * as Clipboard from "expo-clipboard";
 import { ThemeContext } from "./SettingsContext";
-
 
 export default Translator = () => {
   const [loading, setLoading] = useState(true);
@@ -76,44 +76,59 @@ export default Translator = () => {
       style={[
         styles.page,
         {
-          backgroundColor: isDarkMode ? "black" : "#fff",
-          color: isDarkMode ? "white" : "black",
+          backgroundColor: isDarkMode ? "#000" : "#E9E3E6",
         },
       ]}
     >
       {loading && <Text></Text>}
       {error && <Text>Error: {error}</Text>}
       <View style={styles.formContainer}>
-        <Text
-          style={[styles.header, { color: isDarkMode ? "white" : "black" }]}
-        >
-          Profile
-        </Text>
+        <View style={styles.header}>
+          <Text
+            style={[
+              styles.headertit,
+              { color: isDarkMode ? "white" : "#736F72" },
+            ]}
+          >
+            Translator
+          </Text>
+
+          <Image
+            source={
+              isDarkMode
+                ? require("../assets/images/Untitled-1.png")
+                : require("../assets/images/blck logo2.png")
+            }
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+
         <View style={styles.Headings}>
           <Text
-            style={[styles.Heading, { color: isDarkMode ? "white" : "black" }]}
+            style={[styles.Heading, { color: isDarkMode ? "white" : "#736F72" }]}
           >
-            {fromLang === "en" ? "English" : "Sinhala"}
+            {fromLang === "en" ? "English" : "සිංහල"}
           </Text>
           <Pressable onPress={swapLanguages}>
             <AntDesign
               name="swap"
               size={24}
-              color={isDarkMode ? "white" : "black"}
+              color={isDarkMode ? "white" : "#736F72"}
             />
           </Pressable>
           <Text
-            style={[styles.Heading, { color: isDarkMode ? "white" : "black" }]}
+            style={[styles.Heading, { color: isDarkMode ? "white" : "#736F72" }]}
           >
-            {toLang === "si" ? "Sinhala" : "English"}
+            {toLang === "si" ? "සිංහල" : "English"}
           </Text>
         </View>
         <View
           style={[
             styles.inputContainer,
             {
-              backgroundColor: isDarkMode ? "black" : "#fff",
-              borderColor: isDarkMode ? "white" : "black",
+              backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
+              borderColor: isDarkMode ? "#8a8a8a" : "#fff",
             },
           ]}
         >
@@ -121,11 +136,12 @@ export default Translator = () => {
             style={[
               styles.additionalInput,
               {
-                backgroundColor: isDarkMode ? "black" : "#fff",
+                backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
+                color: isDarkMode ? "white" : "#E9E3E6"
               },
             ]}
             placeholder="Enter Text"
-            placeholderTextColor="#aaaaaa"
+            placeholderTextColor={isDarkMode ? "#ffffff" : "#E9E3E6"} 
             onChangeText={setenteredtext}
             value={enteredtext}
             underlineColorAndroid="transparent"
@@ -142,7 +158,13 @@ export default Translator = () => {
               <Ionicons
                 name="send"
                 size={24}
-                color={enteredtext ? "white" : "#aaaaaa"}
+                color={
+                  enteredtext
+                    ? isDarkMode
+                      ? "#ffffff" 
+                      : "#ffffff" 
+                    : "#aaaaaa"
+                }
               />
             </TouchableOpacity>
             {toLang !== "en" && (
@@ -158,10 +180,10 @@ export default Translator = () => {
                     translatedtext
                       ? isDarkMode
                         ? "white"
-                        : "#0288D1"
+                        : "#fff"
                       : isDarkMode
                       ? "#aaaaaa"
-                      : "black"
+                      : "#fff"
                   }
                 />
               </TouchableOpacity>
@@ -173,8 +195,8 @@ export default Translator = () => {
           style={[
             styles.inputContainer,
             {
-              backgroundColor: isDarkMode ? "black" : "#fff",
-              borderColor: isDarkMode ? "white" : "black",
+              backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
+              borderColor: isDarkMode ? "#454545" : "#736F72",
             },
           ]}
         >
@@ -182,11 +204,12 @@ export default Translator = () => {
             style={[
               styles.additionalInput,
               {
-                backgroundColor: isDarkMode ? "black" : "#fff",
+                backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
+                color: isDarkMode ? "white" : "#fff"
               },
             ]}
             placeholder="Translation"
-            placeholderTextColor="#aaaaaa"
+            placeholderTextColor={isDarkMode ? "#ffffff" : "#736F72"} 
             onChangeText={settranslatedtext}
             value={translatedtext}
             underlineColorAndroid="transparent"
@@ -195,26 +218,26 @@ export default Translator = () => {
             multiline={true}
             textAlignVertical="top"
           />
-          <View  style={styles.btn2}>
-          <TouchableOpacity
-            style={styles.speakButton}
-            onPress={copyToClipboard}
-            disabled={!translatedtext}
-          >   
-            <AntDesign
-              name="copy1"
-              size={24}     
-              color={
-                translatedtext
-                  ? isDarkMode
-                    ? "white"
-                    : "#0288D1"
-                  : isDarkMode
-                  ? "#aaaaaa"
-                  : "black"
-              }
-            />   
-          </TouchableOpacity>
+          <View style={styles.btn2}>
+            <TouchableOpacity
+              style={styles.speakButton}
+              onPress={copyToClipboard}
+              disabled={!translatedtext}
+            >
+              <AntDesign
+                name="copy1"
+                size={24}
+                color={
+                  translatedtext
+                    ? isDarkMode
+                      ? "white"
+                      : "#0288D1"
+                    : isDarkMode
+                    ? "#aaaaaa"
+                    : "#fff"
+                }
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -230,23 +253,34 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: "100%",
-    paddingHorizontal: 15 
+    paddingHorizontal: 15,
   },
   header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    marginBottom: 10,
+  },
+  logo: {
+    width: 100,
+    height: 40,
+    marginBottom: 20,
+  },
+  headertit: {
     fontSize: 25,
-    textAlign: "left",
+    fontWeight: "900",
     marginLeft: 5,
-    fontWeight: "bold",
   },
   Headings: {
     flexDirection: "row",
     padding: 20,
-    width: "100%", 
+    width: "100%",
     justifyContent: "space-evenly",
     alignItems: "center",
   },
   Heading: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
   },
   inputContainer: {
@@ -254,7 +288,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 15,
     marginBottom: 15,
-    marginVertical:10
+    marginVertical: 10,
   },
   additionalInput: {
     width: "100%",
@@ -271,15 +305,15 @@ const styles = StyleSheet.create({
   btn: {
     marginBottom: 10,
     gap: 8,
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
     flexDirection: "row",
-    justifyContent:'flex-end'
+    justifyContent: "flex-end",
   },
   btn2: {
     marginBottom: 10,
     gap: 8,
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
     flexDirection: "row",
-    justifyContent:'flex-end'
+    justifyContent: "flex-end",
   },
 });

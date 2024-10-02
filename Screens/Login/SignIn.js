@@ -119,7 +119,7 @@ export default SignIn = () => {
             style={{ margin: 10, backgroundColor: "white",borderColor: "white"  }}
           />
           <View style={styles.bottomContainer}>
-            <Text style={{ fontSize: 12, color: "white" }}>
+            <Text style={{ fontSize: 12, color: "white", fontWeight:'400'}}>
               Don't have an Account?
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>

@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, Switch } from "react-native";
+import { StyleSheet, Text, View, Switch,Image } from "react-native";
 import React, { useContext } from "react";
-import { ThemeContext, LanguageContext } from "./SettingsContext";
+import { ThemeContext} from "./SettingsContext";
 import CustomButton from "../Screens/Login/CustomButton";
 import { logout } from "../utils/actions/authActions";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,7 +10,6 @@ export default Profile = ({ navigation }) => {
   const userData = useSelector((state) => state.auth.userData);
 
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
-  const { language, toggleLanguage } = useContext(LanguageContext);
 
   const handleLogout = async () => {
     try {
@@ -25,28 +24,41 @@ export default Profile = ({ navigation }) => {
       style={[
         styles.container,
         {
-          backgroundColor: isDarkMode ? "black" : "#fff"
+          backgroundColor: isDarkMode ? "#000" : "#E9E3E6",
         },
       ]}
     >
+       <View style={styles.header}>
+
+          <Image
+            source={
+              isDarkMode
+                ? require("../assets/images/Untitled-1.png")
+                : require("../assets/images/blck logo2.png")
+            }
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+
       <View style={styles.container2}>
-        <Text style={[styles.title, { color: isDarkMode ? "white" : "black" }]}>
+        <Text style={[styles.title,  { color: isDarkMode ? "white" : "#736F72" },]}>
           Welcome {userData && userData.fullName ? userData.fullName : "User"}
         </Text>
         {userData ? (
-          <View style={styles.info}>
+          <View style={[styles.info,{  backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",}]}>
             <Text
-              style={[styles.text1, { color: isDarkMode ? "white" : "black" }]}
+              style={[styles.text1, { color: isDarkMode ? "white" : "white" }]}
             >
               {userData.fullName}
             </Text>
             <Text
-              style={[styles.text, { color: isDarkMode ? "white" : "black" }]}
+              style={[styles.text, { color: isDarkMode ? "white" : "white" }]}
             >
               User Role: {userData.role}
             </Text>
             <Text
-              style={[styles.text, { color: isDarkMode ? "white" : "black" }]}
+              style={[styles.text, { color: isDarkMode ? "white" : "white" }]}
             >
               Email: {userData.email}
             </Text>
@@ -65,24 +77,16 @@ export default Profile = ({ navigation }) => {
           </Text>
           <Switch value={isDarkMode} onValueChange={toggleTheme} />
         </View>
-
-        {/* <View style={styles.setting1}>
-          <Text
-            style={[styles.text, { color: isDarkMode ? "white" : "black" }]}
-          >
-            {language === "en" ? "Change to Sinhala" : "Change to English"}
-          </Text>
-          <Switch value={language === "si"} onValueChange={toggleLanguage} />
-        </View> */}
       </View>
 
+      <View style={styles.bottom}>
       <CustomButton
         title="Sign Out"
         onPress={handleLogout}
-        style={{ marginVertical: 8, marginHorizontal: 20, bottom: 100 }}
-        textColor={isDarkMode ? "white" : "black"} 
-        borderColor={isDarkMode ? "white" : "black"}
+        style={{ marginVertical: 8, marginHorizontal: 20, bottom: 100, backgroundColor:'white'}}
+        borderColor={isDarkMode ? "white" : "white"}    
       />
+      </View>
     </View>
   );
 };
@@ -92,7 +96,30 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    paddingHorizontal: 15,
+  },
+  header: {
+    width:'100%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    marginTop: 20,
+  },
+  logo: {
+    width: 100,
+    height: 40,
+    marginBottom: 20,
+  },
+  headertit: {
+    fontSize: 25,
+    fontWeight: "900",
+    marginLeft: 5,
+  },
+  info:{
+    paddingVertical:20,
+    paddingHorizontal:15,
+    borderRadius:10
   },
   container2: {
     flex: 1,
@@ -127,4 +154,8 @@ const styles = StyleSheet.create({
     width: "100%",
     marginHorizontal: 10,
   },
+  bottom:{
+    bottom:10,
+    marginBottom:20
+  }
 });

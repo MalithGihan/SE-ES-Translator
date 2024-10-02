@@ -134,7 +134,7 @@ const SignUp = () => {
           />
 
           <View style={styles.bottomConatiner}>
-            <Text style={{ fontSize: 12, color: "white" }}>
+            <Text style={{ fontSize: 12, color: "white", fontWeight:'400' }}>
               Have an account already ?
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>

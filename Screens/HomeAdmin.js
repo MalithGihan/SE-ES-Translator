@@ -101,6 +101,7 @@ export default function HomeAdmin() {
         tabBarInactiveTintColor: 'rgba(128, 128, 128, 0.5)',
         tabBarStyle: styles.tabBar,
         tabBarIconStyle: styles.tabBarIcon,
+        headerShown: false,
       })}
     >
       <Tab.Screen name={proTranslatorAdminScreen} component={ProTranslatorAdmin} />
