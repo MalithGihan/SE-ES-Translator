@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import ProTranslator from '../Components/ProTranslator';
 import Dictionary from '../Components/Dictionary';
 import Quiz from '../Components/Quiz';
 import Profile from '../Components/Profile';
+import { ThemeContext } from '../Components/SettingsContext'
 
 const translatorScreen = 'Translator';
 const proTranslatorScreen = 'ProTranslator';
@@ -17,6 +18,8 @@ const quizScreen = 'Quiz';
 const Tab = createBottomTabNavigator();
 
 export default function HomeUser() {
+  const { isDarkMode } = useContext(ThemeContext);  // Get the dark mode status from ThemeContext
+
   return (
     <Tab.Navigator
       initialRouteName={translatorScreen}
@@ -40,10 +43,17 @@ export default function HomeUser() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarShowLabel: false,
-        tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'rgba(128, 128, 128, 0.5)',
-        tabBarStyle: styles.tabBar,
+        tabBarActiveTintColor: isDarkMode ? 'white' : 'white',  
+        tabBarInactiveTintColor: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(240, 240, 240, 0.5)',  
+        tabBarStyle: [
+          styles.tabBar, 
+          {
+            backgroundColor: isDarkMode ? '#333' : '#736F72',  
+            shadowColor: isDarkMode ? '#00ffcc' : 'black'        
+          }
+        ],
         tabBarIconStyle: styles.tabBarIcon,
+        headerShown: false,
       })}
     >
       <Tab.Screen name={translatorScreen} component={Translator} />
@@ -60,15 +70,14 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingHorizontal: 10,
     height: 60, 
-    marginBottom:20,
-    marginHorizontal:20,
+    marginBottom: 20,
+    marginHorizontal: 20,
     borderRadius: 50,
-    backgroundColor: 'white',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.5,
     shadowRadius: 5,
     elevation: 5,
+    position: 'absolute',
   },
   tabBarIcon: {
     marginBottom: -5,

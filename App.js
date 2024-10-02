@@ -7,16 +7,16 @@ import Onboarding from "./OnBoarding/Onboarding";
 import Home from "./Screens/Home";
 import SignIn from "./Screens/Login/SignIn";
 import Welcome from "./Screens/Login/Welcome";
-import SignUp from  "./Screens/Login/SignUp"
+import SignUp from "./Screens/Login/SignUp";
 import OnboardingContext from "./OnBoarding/OnboardingContext"; 
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import HomeUser from "./Screens/HomeUser";
 import HomeAdmin from "./Screens/HomeAdmin";
-import ProverbsReport from "./Components/Admin/ProverbsReport";
+import { SettingsProvider } from "./Components/SettingsContext";
+import Appintro from "./Components/Appintro";
 
 const Stack = createStackNavigator();
-
 
 const Loading = () => (
   <View style={styles.loadingContainer}>
@@ -32,14 +32,15 @@ const OnboardingStack = () => (
 
 const MainStack = () => (
   <Provider store={store}>
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Home" component={Home} />
-    <Stack.Screen name="SignIn" component={SignIn} />
-    <Stack.Screen name="Welcome" component={Welcome} />
-    <Stack.Screen name="SignUp" component={SignUp} />
-    <Stack.Screen name="HomeUser" component={HomeUser} />
-    <Stack.Screen name="HomeAdmin" component={HomeAdmin} />
-  </Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="SignIn" component={SignIn} />
+      <Stack.Screen name="Welcome" component={Welcome} />
+      <Stack.Screen name="SignUp" component={SignUp} />
+      <Stack.Screen name="HomeUser" component={HomeUser} />
+      <Stack.Screen name="HomeAdmin" component={HomeAdmin} />
+      <Stack.Screen name="Appintro" component={Appintro} />
+    </Stack.Navigator>
   </Provider>
 );
 
@@ -70,10 +71,12 @@ export default function App() {
 
   return (
     <OnboardingContext.Provider value={{ viewedOnboarding, setViewedOnboarding }}>
-      <StatusBar style="auto" />
-      <NavigationContainer>
-        {!viewedOnboarding ? <OnboardingStack /> : <MainStack />}
-      </NavigationContainer>
+      <SettingsProvider> 
+        <StatusBar style="auto" />
+        <NavigationContainer>
+          {!viewedOnboarding ? <OnboardingStack /> : <MainStack />}
+        </NavigationContainer>
+      </SettingsProvider>
     </OnboardingContext.Provider>
   );
 }

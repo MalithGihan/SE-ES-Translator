@@ -4,6 +4,7 @@ import { logout } from "../utils/actions/authActions";
 import { useSelector, useDispatch } from "react-redux";
 import CustomButton from "../Screens/Login/CustomButton";
 import { useNavigation } from '@react-navigation/native';
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default Profile = () => {
   const dispatch = useDispatch(); 
@@ -27,19 +28,26 @@ export default Profile = () => {
         {userData ? (
           <View style={styles.info}>
             <Text style={styles.text1}>{userData.fullName}</Text>
-            <Text style={styles.text}>User Role: {userData.role}</Text>
-            <Text style={styles.text}>Email: {userData.email}</Text>
+            <Text style={styles.text2}>User Role: {userData.role}</Text>
+            <Text style={styles.text2}>Email: {userData.email}</Text>
           </View>
         ) : (
           <Text style={styles.text}>No user data available</Text>
         )}
         <View style={styles.report}>
           <TouchableOpacity onPress={() => navigation.navigate('ProverbReportScreen')}>
+            <View style={styles.wordbut}>
             <Text style={styles.text}>Proverbs Report Management</Text>
+            <AntDesign name="rightcircle" size={20} color="black" style={{marginTop:10}}/>
+            </View>
           </TouchableOpacity>
           <TouchableOpacity>
+          <View style={styles.wordbut}>
             <Text style={styles.text}>Dictionary Report Management</Text>
+            <AntDesign name="rightcircle" size={20} color="black" style={{marginTop:10}}/>
+            </View>
           </TouchableOpacity>
+
         </View>
         <CustomButton
           title="Sign Out"
@@ -69,10 +77,15 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     fontWeight: "bold",
   },
-  text: {
+  text2: {
     fontSize: 15,
     marginVertical: 8,
     fontWeight: "500",
+  },
+  text: {
+    fontSize: 15,
+    marginVertical: 8,
+    fontWeight: "500"
   },
   info: {
     flexDirection: "colum",
@@ -86,8 +99,12 @@ const styles = StyleSheet.create({
   report: {
     flexDirection: "colum",
     justifyContent: "flex-start",
-    marginStart: 25,
     marginTop: 20,
     marginBottom: 50
   },
+  wordbut:{
+    marginHorizontal:15,
+    flexDirection:'row',
+    justifyContent:'space-between'
+  }
 });

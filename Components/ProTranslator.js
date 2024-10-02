@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   TextInput,
@@ -6,14 +6,15 @@ import {
   Text,
   Pressable,
   TouchableOpacity,
-  Alert,
   FlatList,
+  Image,
 } from "react-native";
 import { getProverbs } from "../utils/actions-proverbs/proverbAction";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import * as Speech from "expo-speech";
 import * as Clipboard from "expo-clipboard";
 import Toast from "react-native-toast-message";
+import { ThemeContext } from "./SettingsContext";
 
 export default ProTranslator = () => {
   const [proverbs, setProverbs] = useState([]);
@@ -23,6 +24,7 @@ export default ProTranslator = () => {
   const [toLang, setToLang] = useState("si");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { isDarkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     fetchProverbs();
@@ -58,11 +60,11 @@ export default ProTranslator = () => {
     if (text) {
       await Clipboard.setStringAsync(text);
       Toast.show({
-        type: 'success',
-        text1: 'Copied!',
-        text2: 'Translation copied to clipboard!',
-        position: 'bottom',
-        visibilityTime: 2000, 
+        type: "success",
+        text1: "Copied!",
+        text2: "Translation copied to clipboard!",
+        position: "bottom",
+        visibilityTime: 2000,
       });
     }
   };
@@ -92,25 +94,78 @@ export default ProTranslator = () => {
   };
 
   return (
-    <View style={styles.page}>
+    <View
+      style={[
+        styles.page,
+        { backgroundColor: isDarkMode ? "#000" : "#E9E3E6" },
+      ]}
+    >
+      <View style={styles.header}>
+        <Text
+          style={[
+            styles.headertit,
+            { color: isDarkMode ? "white" : "#736F72" },
+          ]}
+        >
+          Pro Translator
+        </Text>
+
+        <Image
+          source={
+            isDarkMode
+              ? require("../assets/images/Untitled-1.png")
+              : require("../assets/images/blck logo2.png")
+          }
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </View>
       <View style={styles.formContainer}>
         <View style={styles.Headings}>
-          <Text style={styles.Heading}>
-            {fromLang === "en" ? "English" : "Sinhala"}
+          <Text
+            style={[
+              styles.Heading,
+              { color: isDarkMode ? "white" : "#736F72" },
+            ]}
+          >
+            {fromLang === "en" ? "English" : "සිංහල"}
           </Text>
           <Pressable onPress={swapLanguages}>
-            <AntDesign name="swap" size={24} color="black" />
+            <AntDesign
+              name="swap"
+              size={24}
+              color={isDarkMode ? "white" : "#736F72"}
+            />
           </Pressable>
-          <Text style={styles.Heading}>
-            {toLang === "si" ? "Sinhala" : "English"}
+          <Text
+            style={[
+              styles.Heading,
+              { color: isDarkMode ? "white" : "#736F72" },
+            ]}
+          >
+            {toLang === "si" ? "සිංහල" : "English"}
           </Text>
         </View>
 
-        <View style={styles.inputContainer}>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
+              borderColor: isDarkMode ? "#8a8a8a" : "#fff",
+            },
+          ]}
+        >
           <TextInput
-            style={styles.additionalInput}
+            style={[
+              styles.additionalInput,
+              {
+                backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
+                color: isDarkMode ? "white" : "#E9E3E6",
+              },
+            ]}
             placeholder="Enter Text"
-            placeholderTextColor="#aaaaaa"
+            placeholderTextColor={isDarkMode ? "#ffffff" : "#E9E3E6"}
             onChangeText={handleTextChange}
             value={enteredtext}
             underlineColorAndroid="transparent"
@@ -124,7 +179,7 @@ export default ProTranslator = () => {
                 style={styles.speakButton}
                 onPress={() => speak(enteredtext)}
               >
-                <AntDesign name="sound" size={24} color="#0288D1" />
+                <AntDesign name="sound" size={24} color="#fff" />
               </TouchableOpacity>
             )}
           </View>
@@ -137,9 +192,22 @@ export default ProTranslator = () => {
           data={suggestions}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={styles.suggestionItem}>
+            <View
+              style={[
+                styles.suggestionItem,
+                {
+                  backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
+                  borderColor: isDarkMode ? "#454545" : "#736F72",
+                },
+              ]}
+            >
               <View style={styles.result}>
-                <Text style={styles.proverbText}>
+                <Text
+                  style={[
+                    styles.proverbText,
+                    { color: isDarkMode ? "white" : "#fff" },
+                  ]}
+                >
                   {fromLang === "en"
                     ? `${item.sinhaleseProverb} `
                     : item.englishTranslation}
@@ -156,22 +224,33 @@ export default ProTranslator = () => {
                   <AntDesign name="copy1" size={20} color="#0288D1" />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.translationText1}>
+              <Text
+                style={[
+                  styles.translationText1,
+                  { color: isDarkMode ? "#B2B2B2" : "#fff" },
+                ]}
+              >
                 {fromLang === "en"
                   ? item.englishTranslation
                   : item.sinhaleseProverb}
               </Text>
-              <Text style={styles.translationText2}>
+              <Text
+                style={[
+                  styles.translationText2,
+                  { color: isDarkMode ? "#B2B2B2" : "#fff" },
+                ]}
+              >
                 {fromLang === "en"
                   ? `${item.singlishMeaning}`
                   : item.singlishMeaning}
               </Text>
             </View>
           )}
+          contentContainerStyle={{ paddingBottom: 300 }} 
         />
       </View>
       <>
-      <Toast />
+        <Toast />
       </>
     </View>
   );
@@ -180,15 +259,29 @@ export default ProTranslator = () => {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    flexDirection: "column",
-    width: "90%",
-    alignItems: "stretch",
-    margin: 20,
-    alignSelf: "center",
+    width: "100%",
+    paddingHorizontal: 15,
+    paddingTop: 20,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    marginBottom: 10,
+  },
+  logo: {
+    width: 100,
+    height: 40,
+    marginBottom: 20,
+  },
+  headertit: {
+    fontSize: 25,
+    fontWeight: "900",
+    marginLeft: 5,
   },
   formContainer: {
     flexDirection: "column",
-    padding: 0,
     justifyContent: "center",
     width: "100%",
     alignItems: "stretch",
@@ -219,8 +312,6 @@ const styles = StyleSheet.create({
   additionalInput: {
     width: "100%",
     minHeight: 100,
-    color: "#000000",
-    backgroundColor: "#fff",
     paddingTop: 15,
   },
   result: {
@@ -230,23 +321,21 @@ const styles = StyleSheet.create({
   },
   btn: {
     marginBottom: 10,
-    flexDirection: 'row', 
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
-  
+
   speakButton: {
     marginTop: 10,
     padding: 10,
     borderRadius: 5,
-    marginLeft: 'auto',   
-    alignSelf: 'center',   
-  }, 
+    marginLeft: "auto",
+    alignSelf: "center",
+  },
   suggestionItem: {
-    backgroundColor: "#fff",
     padding: 20,
     borderBottomWidth: 1,
     borderRadius: 10,
-    borderColor: "#ccc",
     flexDirection: "column",
     width: "100%",
     marginBottom: 10,

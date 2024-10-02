@@ -1,11 +1,12 @@
-import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, Alert } from 'react-native';
-import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, Alert,Image } from 'react-native';
+import React, { useEffect, useState, useContext} from 'react';
 import axios from 'axios';
 import * as Speech from 'expo-speech';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Clipboard from 'expo-clipboard';
 import { RetrieveAllCWords } from '../utils/actions-proverbs/Cultural_words'
+import { ThemeContext } from "./SettingsContext";
 
 export default Dictionary = () => {
   const [words, setWords] = useState([]);
@@ -15,6 +16,8 @@ export default Dictionary = () => {
   const [additionalInput1, setAdditionalInput1] = useState('');
   const [additionalInput2, setAdditionalInput2] = useState('');
   const [culturalTranslation, setCulturalTranslation] = useState('');
+  const { isDarkMode } = useContext(ThemeContext);
+
 
   const onSubmit = async () => {
     try {
@@ -112,20 +115,47 @@ export default Dictionary = () => {
   };
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page,{backgroundColor: isDarkMode ? "#000" : "#E9E3E6"}]}>
       {loading && <Text>Loading words...</Text>}
       {error && <Text>Error: {error}</Text>}
+
+      <View style={styles.header}>
+      <Text
+            style={[
+              styles.headertit,
+              { color: isDarkMode ? "white" : "#736F72" },
+            ]}
+          >
+            Dictionary
+          </Text>
+
+          <Image
+            source={
+              isDarkMode
+                ? require("../assets/images/Untitled-1.png")
+                : require("../assets/images/blck logo2.png")
+            }
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
       <View style={styles.formContainer}>
         <View style={styles.Headings}>
-          <Text style={styles.Heading}>English</Text>
-          <AntDesign name="arrowright" size={24} color="black" />
-          <Text style={styles.Heading}>Sinhala</Text>
+          <Text style={[styles.Heading,{ color: isDarkMode ? "white" : "#736F72" }]}>English</Text>
+          <AntDesign name="arrowright" size={24} color={isDarkMode ? "white" : "#736F72"} />
+          <Text style={[styles.Heading,{ color: isDarkMode ? "white" : "#736F72" }]}>සිංහල</Text>
         </View>
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer,{
+              backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
+              borderColor: isDarkMode ? "#8a8a8a" : "#fff",
+            },]}>
           <TextInput
-            style={styles.additionalInput}
+            style={[styles.additionalInput,{
+              backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
+              color: isDarkMode ? "white" : "#E9E3E6",
+            }]}
             placeholder='Enter Text'
-            placeholderTextColor='#aaaaaa'
+            placeholderTextColor={isDarkMode ? "#ffffff" : "#E9E3E6"}
             onChangeText={setAdditionalInput1}
             value={additionalInput1}
             underlineColorAndroid='transparent'
@@ -142,7 +172,13 @@ export default Dictionary = () => {
               <Ionicons
                 name="send"
                 size={24}
-                color={additionalInput1 ? "#0288D1" : "#aaaaaa"}
+                color={
+                  additionalInput1
+                    ? isDarkMode
+                      ? "#ffffff" 
+                      : "#ffffff" 
+                    : "#aaaaaa"
+                }
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -153,16 +189,30 @@ export default Dictionary = () => {
               <AntDesign
                 name="sound"
                 size={24}
-                color={additionalInput1 ? "#0288D1" : "#aaaaaa"}
+                color={
+                  additionalInput1
+                    ? isDarkMode
+                      ? "white"
+                      : "#fff"
+                    : isDarkMode
+                    ? "#fff"
+                    : "#fff"
+                }
               />
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer,{
+              backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
+              borderColor: isDarkMode ? "#454545" : "#736F72",
+            }]}>
           <TextInput
-            style={styles.additionalInput}
+            style={[styles.additionalInput,{
+              backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
+              color: isDarkMode ? "white" : "#fff"
+            }]}
             placeholder='Translation'
-            placeholderTextColor='#000000'
+            placeholderTextColor={isDarkMode ? "#ffffff" : "#736F72"}
             value={additionalInput2}
             underlineColorAndroid='transparent'
             autoCapitalize='none'
@@ -181,7 +231,15 @@ export default Dictionary = () => {
             <AntDesign
               name="copy1"
               size={24}
-              color={additionalInput2 ? "#0288D1" : "#aaaaaa"}
+              color={
+                additionalInput2
+                  ? isDarkMode
+                    ? "white"
+                    : "#0288D1"
+                  : isDarkMode
+                  ? "#aaaaaa"
+                  : "#fff"
+              }
             />
           </TouchableOpacity>
         </View>
@@ -192,16 +250,22 @@ export default Dictionary = () => {
           data={filteredWords}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={styles.container}>
+            <View style={[styles.container,{
+              backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
+              borderColor: isDarkMode ? "#454545" : "#736F72",
+            }]}>
               <View style={styles.innerContainer}>
-                {item.headings && item.headings.slice(3, 5).map((heading, index) => (
-                  <Text key={index} style={styles.itemHeading}>
+
+                {item.headings && item.headings.slice(2, 5).map((heading, index) => (
+                  <Text key={index} style={[styles.itemHeading,{ color: isDarkMode ? "#B2B2B2" : "#fff" }]}>
+
                     {index === 1 ? `"${heading}"` : heading}
                   </Text>
                 ))}
               </View>
             </View>
           )}
+          contentContainerStyle={{ paddingBottom: 300 }}
         />
       ) : (
         additionalInput2 && <Text style={styles.msg}>
@@ -215,18 +279,32 @@ export default Dictionary = () => {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    flexDirection: 'column',
-    alignSelf: 'center',
-    marginHorizontal: -30
-
+    width: "100%",
+    paddingHorizontal:15,
+    paddingTop: 20,
   },
   formContainer: {
     flexDirection: 'column',
     paddingHorizontal: 0,
-
-
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    marginBottom: 10,
+  },
+  logo: {
+    width: 100,
+    height: 40,
+    marginBottom: 20,
+  },
+  headertit: {
+    fontSize: 25,
+    fontWeight: "900",
+    marginLeft: 5,
   },
   Headings: {
     flexDirection: 'row',
@@ -248,7 +326,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderColor: '#888',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     paddingHorizontal: 10,
     marginTop: 20,
     marginBottom: 20,
@@ -291,21 +369,12 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    alignSelf: 'center',
-    width: '80%',
-    flexDirection: 'row',
-    padding: 15,
-    marginVertical: 8,
-    marginHorizontal: 10,
-    borderRadius: 15,
-    backgroundColor: 'white',
-    elevation: 6,
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    borderWidth: 1,
-    borderColor: 'black',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderRadius: 10,
+    flexDirection: "column",
+    width: "100%",
+    marginBottom: 10,
   },
 
   innerContainer: {
