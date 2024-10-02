@@ -15,7 +15,9 @@ export default Dictionary = () => {
   const [error, setError] = useState(null);
   const [additionalInput1, setAdditionalInput1] = useState('');
   const [additionalInput2, setAdditionalInput2] = useState('');
+  const [culturalTranslation, setCulturalTranslation] = useState('');
   const { isDarkMode } = useContext(ThemeContext);
+
 
   const onSubmit = async () => {
     try {
@@ -36,7 +38,9 @@ export default Dictionary = () => {
       if (response && response.data && response.data.translated_text) {
         const translatedText = response.data.translated_text.si;
         setAdditionalInput2(translatedText);
-        searchInRetrievedData(translatedText);
+        const matches = searchInRetrievedData(translatedText);
+        const culturalText = combineTranslationWithCulturalWords(translatedText, matches);
+        setCulturalTranslation(culturalText);
       } else {
         setAdditionalInput2('No translation found.');
         setFilteredWords([]);
@@ -44,17 +48,36 @@ export default Dictionary = () => {
     } catch (error) {
       console.error('Error fetching translation:', error);
       setAdditionalInput2('Error fetching translation.');
+      setCulturalTranslation('');
       setFilteredWords([]);
     }
   };
 
   const searchInRetrievedData = (text) => {
+    const translatedWords = text.split(' ');
+    const matches = words.filter(word =>
+      word.headings && translatedWords.some(translatedWord =>
+        word.headings[1].toLowerCase() === translatedWord.toLowerCase()
+      )
+    );
     const filtered = words.filter(word =>
       word.headings && word.headings.some(heading =>
         heading.toLowerCase().includes(text.toLowerCase())
       )
     );
     setFilteredWords(filtered);
+    return matches;
+  };
+
+  const combineTranslationWithCulturalWords = (translatedText, matches) => {
+    const translatedWords = translatedText.split(' ');
+    return translatedWords.map(word => {
+      const match = matches.find(m => m.headings[1].toLowerCase() === word.toLowerCase());
+      if (match && match.headings[2]) {
+        return `${word} (${match.headings[2]})`;
+      }
+      return word;
+    }).join(' ');
   };
 
   useEffect(() => {
@@ -197,6 +220,9 @@ export default Dictionary = () => {
             multiline={true}
             textAlignVertical='top'
           />
+          {culturalTranslation && (
+            <Text style={styles.culturalTranslation}>{culturalTranslation}</Text>
+          )}
           <TouchableOpacity
             style={styles.speakButton}
             onPress={copyToClipboard}
@@ -229,8 +255,10 @@ export default Dictionary = () => {
               borderColor: isDarkMode ? "#454545" : "#736F72",
             }]}>
               <View style={styles.innerContainer}>
+
                 {item.headings && item.headings.slice(2, 5).map((heading, index) => (
                   <Text key={index} style={[styles.itemHeading,{ color: isDarkMode ? "#B2B2B2" : "#fff" }]}>
+
                     {index === 1 ? `"${heading}"` : heading}
                   </Text>
                 ))}
@@ -292,7 +320,7 @@ const styles = StyleSheet.create({
 
   },
   inputContainer: {
-    width: '100%',
+    width: 400,
     flexDirection: 'column',
     alignItems: 'flex-end',
     marginBottom: 10,
@@ -381,5 +409,12 @@ const styles = StyleSheet.create({
     marginRight: -3,
     gap: 8,
     flexDirection: 'row'
-  }
+  },
+  culturalTranslation: {
+    width: '100%',
+    marginTop: 10,
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#4CAF50',
+  },
 });

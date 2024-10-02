@@ -37,13 +37,19 @@ const Details = ({ route }) => {
     return (
         <ScrollView contentContainerStyle={styles.formContainer}>
             {headings.map((heading, index) => (
-                <TextInput
-                    key={index}
-                    style={styles.textField}
-                    placeholder='Update heading'
-                    onChangeText={(text) => handleHeadingChange(text, index)}
-                    value={heading}
-                />
+                index === 0 ? (
+                    <Text key={index} style={styles.itemHeading}>
+                        {heading}
+                    </Text>
+                ) : (
+                    <TextInput
+                        key={index}
+                        style={styles.textField}
+                        placeholder='Update heading'
+                        onChangeText={(text) => handleHeadingChange(text, index)}
+                        value={heading}
+                    />
+                )
             ))}
             <Pressable style={styles.buttonUpdate} onPress={handleUpdate}>
                 <Text style={styles.buttonTextd}>Update</Text>
@@ -63,14 +69,19 @@ const styles = StyleSheet.create({
         padding: 20,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#bfdad9',
+    },
+    itemHeading: {
+        color: 'black',
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10
     },
     textField: {
         width: '100%',
         height: 50,
         borderColor: '#888',
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 10,
         paddingHorizontal: 10,
         marginBottom: 20,
         color: '#000',

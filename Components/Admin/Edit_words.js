@@ -5,11 +5,13 @@ import debounce from 'lodash.debounce';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Picker } from '@react-native-picker/picker';
 
 export default function Edit_words({ navigation }) {
   const [words, setWords] = useState([]);
   const [filteredWords, setFilteredWords] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedOption, setSelectedOption] = useState('Cultural');
 
   const fetchWords = async () => {
     try {
@@ -35,15 +37,17 @@ export default function Edit_words({ navigation }) {
         return searchQuery
           ? word.headings.some(heading => heading.toLowerCase().includes(searchQuery.toLowerCase()))
           : true;
+      }).filter(word => {
+        return selectedOption === 'Cultural' ? word.headings[0] === 'Cultural' : word.headings[0] === 'Numbers';
       });
       setFilteredWords(filtered);
     }, 300),
-    [words, searchQuery]
+    [words, searchQuery, selectedOption]
   );
 
   useEffect(() => {
     debouncedFilterWords();
-  }, [searchQuery, debouncedFilterWords]);
+  }, [searchQuery, debouncedFilterWords, selectedOption]);
 
   const deleteWord = async (id) => {
     try {
@@ -69,6 +73,15 @@ export default function Edit_words({ navigation }) {
         onChangeText={setSearchQuery}
         value={searchQuery}
       />
+      <Picker
+        selectedValue={selectedOption}
+        onValueChange={(itemValue) => setSelectedOption(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="Cultural" value="Cultural" />
+        <Picker.Item label="Numbers" value="Numbers" />
+      </Picker>
+
       <FlatList
         data={filteredWords}
         keyExtractor={item => item.id}
@@ -78,7 +91,7 @@ export default function Edit_words({ navigation }) {
             onPress={() => handleItemPress(item)}
           >
             <View style={styles.innerContainer}>
-              {item.headings && item.headings.map((heading, index) => (
+              {item.headings && item.headings.length > 1 && item.headings.slice(1).map((heading, index) => (
                 <Text key={index} style={styles.itemHeading}>
                   {heading}
                 </Text>
@@ -105,7 +118,6 @@ export default function Edit_words({ navigation }) {
 const styles = StyleSheet.create({
   PageContainer: {
     flex: 1,
-    backgroundColor: '#bfdad9',
     paddingTop: 10,
     paddingHorizontal: 10,
   },
@@ -119,6 +131,15 @@ const styles = StyleSheet.create({
     color: '#000',
     backgroundColor: '#fff',
   },
+  picker: {
+    height: 50,
+    width: '100%',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#888',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+  },
   container: {
     flexDirection: 'row',
     padding: 15,
@@ -127,9 +148,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    borderWidth: 2,
+    borderColor: '#888',
   },
   innerContainer: {
     flex: 1,
