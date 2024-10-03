@@ -5,6 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Print from 'expo-print';
 import { Fontisto } from '@expo/vector-icons';
 import { RetrieveAllCWords } from '../../utils/actions-proverbs/Cultural_words';
+import { Picker } from '@react-native-picker/picker';
 
 export default function Report() {
     const [words, setWords] = useState([]);
@@ -17,15 +18,17 @@ export default function Report() {
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
     const [showEndDatePicker, setShowEndDatePicker] = useState(false);
     const [showDateFilter, setShowDateFilter] = useState(false);
+    const [filterType, setFilterType] = useState('All');
+    const [dateError, setDateError] = useState('');
 
     useEffect(() => {
         const fetchWords = async () => {
             try {
                 const data = await RetrieveAllCWords();
-                const wordsList = Object.keys(data).map(key => ({ 
-                    id: key, 
+                const wordsList = Object.keys(data).map(key => ({
+                    id: key,
                     ...data[key],
-                    createdAt: data[key].createdAt ? new Date(data[key].createdAt) : new Date() 
+                    createdAt: data[key].createdAt ? new Date(data[key].createdAt) : new Date()
                 }));
                 setWords(wordsList);
                 setFilteredWords(wordsList);
@@ -36,7 +39,6 @@ export default function Report() {
                 setLoading(false);
             }
         };
-
         fetchWords();
     }, []);
 
@@ -44,22 +46,24 @@ export default function Report() {
         debounce(() => {
             const filtered = words.filter(word => {
                 const matchesSearchQuery = searchQuery
-                    ? word.headings && word.headings.some(heading => 
+                    ? word.headings && word.headings.some(heading =>
                         heading.toLowerCase().includes(searchQuery.toLowerCase())
-                      )
+                    )
                     : true;
                 const wordDate = word.createdAt instanceof Date ? word.createdAt : new Date(word.createdAt);
                 const matchesDateRange = wordDate >= startDate && wordDate <= endDate;
-                return matchesSearchQuery && matchesDateRange;
+                const matchesFilterType = filterType === 'All' ||
+                    (word.headings && word.headings.includes(filterType));
+                return matchesSearchQuery && matchesDateRange && matchesFilterType;
             });
             setFilteredWords(filtered);
         }, 300),
-        [words, searchQuery, startDate, endDate]
+        [words, searchQuery, startDate, endDate, filterType]
     );
 
     useEffect(() => {
         debouncedFilterWords();
-    }, [searchQuery, startDate, endDate, debouncedFilterWords]);
+    }, [searchQuery, startDate, endDate, filterType, debouncedFilterWords]);
 
     const handleTextChange = (text) => {
         setSearchQuery(text);
@@ -69,6 +73,11 @@ export default function Report() {
         setShowStartDatePicker(false);
         if (selectedDate) {
             setStartDate(selectedDate);
+            if (selectedDate > endDate) {
+                setDateError('Start date cannot be later than end date.');
+            } else {
+                setDateError('');
+            }
         }
     };
 
@@ -76,13 +85,23 @@ export default function Report() {
         setShowEndDatePicker(false);
         if (selectedDate) {
             setEndDate(selectedDate);
+            if (selectedDate >= startDate) {
+                setEndDate(selectedDate);
+                setDateError('');
+            } else {
+                setDateError('End date cannot be earlier than start date.');
+            }
         }
     };
 
     const generateReport = async () => {
+        if (dateError) {
+            alert(dateError);
+            return;
+        }
         const rowCount = filteredWords.length;
         const htmlContent = `
-            <html>
+          <html>
             <head>
                 <style>
                     body { font-family: Arial, sans-serif; }
@@ -96,7 +115,7 @@ export default function Report() {
             </head>
             <body>
                 <div class="report-container">
-                    <h1>NEW WORDS ENTERED TO THE SYSTEM</h1>
+                    <h1>NEW ${filterType} ENTERED TO THE SYSTEM</h1>
                     <p>Date Range: ${startDate.toDateString()} - ${endDate.toDateString()}</p>
                     <p class="summary">Total Items: ${rowCount}</p>
                     <hr>
@@ -141,8 +160,8 @@ export default function Report() {
                 value={searchQuery}
             />
             <View style={styles.btns}>
-                <Pressable 
-                    style={[styles.Filterbtn, { backgroundColor: showDateFilter ? '#4CAF50' : '#007BFF' }]} 
+                <Pressable
+                    style={[styles.Filterbtn, { backgroundColor: showDateFilter ? '#4CAF50' : '#007BFF' }]}
                     onPress={() => setShowDateFilter(!showDateFilter)}
                 >
                     <Text style={styles.name}>{showDateFilter ? 'Hide Filter' : 'Show Filter'}</Text>
@@ -151,11 +170,24 @@ export default function Report() {
                     <Text style={styles.name}>Generate Report</Text>
                 </Pressable>
             </View>
+            {dateError ? <Text style={styles.errorText}>{dateError}</Text> : null}
             {showDateFilter && (
                 <View style={styles.dateFilterContainer}>
                     <Text style={[styles.dateText, { color: 'blue', fontWeight: 'bold' }]}>
                         Choose The Dates
                     </Text>
+                    <View style={styles.filterRow}>
+                        <Text style={styles.dateText}>Select Filter Type:</Text>
+                        <Picker
+                            selectedValue={filterType}
+                            style={{ height: 50, width: 150 }}
+                            onValueChange={(itemValue) => setFilterType(itemValue)}
+                        >
+                            <Picker.Item label="All" value="All" />
+                            <Picker.Item label="Cultural" value="Cultural" />
+                            <Picker.Item label="Number" value="Numbers" />
+                        </Picker>
+                    </View>
                     <View style={styles.dateRow}>
                         <Pressable onPress={() => setShowStartDatePicker(true)}>
                             <Fontisto name="date" size={24} color="black" />
@@ -199,8 +231,12 @@ export default function Report() {
                                             {heading}
                                         </Text>
                                     ))}
-                                    <Text style={styles.dateText}>
-                                        Created: {item.createdAt.toDateString()}
+                                    <Text style={[styles.dateText, { alignSelf: 'flex-end', fontSize: 12 }]}>
+                                        {new Date(item.createdAt).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                        })}
                                     </Text>
                                 </View>
                             </View>
@@ -217,8 +253,8 @@ export default function Report() {
 const styles = StyleSheet.create({
     PageContainer: {
         flex: 1,
-        backgroundColor: '#bfdad9',
-        padding: 10
+        padding: 10,
+        paddingTop: 30
     },
     btns: {
         paddingTop: 10,
@@ -242,57 +278,72 @@ const styles = StyleSheet.create({
         borderColor: '#888',
         borderWidth: 1,
     },
+    dateRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    dateText: {
+        marginLeft: 10,
+        fontSize: 16,
+    },
+    errorText: {
+        color: 'red',
+        alignSelf: 'center',
+        fontSize: 14,
+        marginVertical: 10,
+    },
     searchInput: {
         height: 40,
         borderColor: '#888',
         borderWidth: 1,
         borderRadius: 5,
-        paddingHorizontal: 10,
-        margin: 10,
-        color: '#000',
+        padding: 10,
+    },
+    container: {
+        padding: 10,
+    },
+    card: {
         backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        elevation: 2,
+    },
+    innerContainer: {
+        padding: 10,
+    },
+    itemHeading: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    dateText: {
+        marginTop: 5,
+        fontSize: 14,
     },
     dateFilterContainer: {
-        margin: 10,
         padding: 10,
-        backgroundColor: '#fff',
-        borderRadius: 5,
-        borderColor: '#888',
         borderWidth: 1,
-        alignItems: 'center'
+        borderColor: '#ccc',
+        borderRadius: 10,
+        marginTop: 10,
     },
     dateRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 5
+        justifyContent: 'space-between',
+        paddingVertical: 5,
     },
-    dateText: {
-        marginLeft: 10,
-        fontSize: 16,
-        color: '#333',
+    filterRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 5,
     },
-    container: {
-        padding: 15,
-        marginVertical: 8,
-        marginHorizontal: 10,
-        borderRadius: 10,
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-    },
-    innerContainer: {
-        justifyContent: 'center',
-    },
-    itemHeading: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 5,
-    },
-    card: {
-        width: '100%',
-        minHeight: 60,
-    }
 });

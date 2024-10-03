@@ -7,22 +7,29 @@ import {
   StyleSheet,
   Alert,
   Image,
+  FlatList
 } from "react-native";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Speech from "expo-speech";
 import * as Clipboard from "expo-clipboard";
 import { ThemeContext } from "./SettingsContext";
+import { RetrieveAllCWords } from '../utils/actions-proverbs/Cultural_words';
+
 
 export default Translator = () => {
+  const [words, setWords] = useState([]);
+  const [filteredWords, setFilteredWords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [enteredtext, setenteredtext] = useState("");
   const [translatedtext, settranslatedtext] = useState("");
   const [fromLang, setFromLang] = useState("en");
   const [toLang, setToLang] = useState("si");
+
+  const [culturalTranslation, setCulturalTranslation] = useState('');
   const { isDarkMode } = useContext(ThemeContext);
 
   const onSubmit = async () => {
@@ -36,20 +43,74 @@ export default Translator = () => {
           from: fromLang,
         },
         headers: {
-          "x-rapidapi-key": "your-rapidapi-key-here",
-          "x-rapidapi-host": "nlp-translation.p.rapidapi.com",
+          'x-rapidapi-key': '4e1aa0bf4emsh14488fc7aa3851ap1a384ejsn2d1c01fccbd3',
+          'x-rapidapi-host': 'nlp-translation.p.rapidapi.com'
         },
       });
 
       if (response && response.data && response.data.translated_text) {
-        settranslatedtext(response.data.translated_text[toLang]);
+        const translatedText = response.data.translated_text[toLang];
+        settranslatedtext(translatedText);
+        const matches = searchInRetrievedData(translatedText);
+        const culturalText = combineTranslationWithCulturalWords(translatedText, matches);
+        setCulturalTranslation(culturalText);
       } else {
-        settranslatedtext("No translation found.");
+        settranslatedtext('No translation found.');
+        setFilteredWords([]);
       }
     } catch (error) {
-      console.error("Error fetching translation:", error);
-      settranslatedtext("Error fetching translation.");
+      console.error('Error fetching translation:', error);
+      settranslatedtext('Error fetching translation.');
+      setCulturalTranslation('');
+      setFilteredWords([]);
     }
+  };
+  const searchInRetrievedData = (text) => {
+    const translatedWords = text.split(' ');
+    const matches = words.filter(word =>
+      word.headings && translatedWords.some(translatedWord =>
+        word.headings[1].toLowerCase() === translatedWord.toLowerCase()
+      )
+    );
+    const filtered = words.filter(word =>
+      word.headings && word.headings.some(heading =>
+        heading.toLowerCase().includes(text.toLowerCase())
+      )
+    );
+    setFilteredWords(filtered);
+    return matches;
+  };
+
+  useEffect(() => {
+    const fetchWords = async () => {
+      try {
+        const data = await RetrieveAllCWords();
+        const wordsList = Object.keys(data).map(key => ({
+          id: key,
+          ...data[key],
+          createdAt: data[key].createdAt ? new Date(data[key].createdAt) : new Date()
+        }));
+        setWords(wordsList);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching words:', error);
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchWords();
+  }, []);
+
+  const combineTranslationWithCulturalWords = (translatedText, matches) => {
+    const translatedWords = translatedText.split(' ');
+    return translatedWords.map(word => {
+      const match = matches.find(m => m.headings[1].toLowerCase() === word.toLowerCase());
+      if (match && match.headings[2]) {
+        return `${word} (${match.headings[2]})`;
+      }
+      return word;
+    }).join(' ');
   };
 
   const swapLanguages = () => {
@@ -72,27 +133,14 @@ export default Translator = () => {
   };
 
   return (
-    <View
-      style={[
-        styles.page,
-        {
-          backgroundColor: isDarkMode ? "#000" : "#E9E3E6",
-        },
-      ]}
-    >
+    <View style={[styles.page, { backgroundColor: isDarkMode ? "#000" : "#E9E3E6", },]} >
       {loading && <Text></Text>}
       {error && <Text>Error: {error}</Text>}
       <View style={styles.formContainer}>
         <View style={styles.header}>
-          <Text
-            style={[
-              styles.headertit,
-              { color: isDarkMode ? "white" : "#736F72" },
-            ]}
-          >
+          <Text style={[styles.headertit, { color: isDarkMode ? "white" : "#736F72" },]}>
             Translator
           </Text>
-
           <Image
             source={
               isDarkMode
@@ -106,8 +154,7 @@ export default Translator = () => {
 
         <View style={styles.Headings}>
           <Text
-            style={[styles.Heading, { color: isDarkMode ? "white" : "#736F72" }]}
-          >
+            style={[styles.Heading, { color: isDarkMode ? "white" : "#736F72" }]}>
             {fromLang === "en" ? "English" : "සිංහල"}
           </Text>
           <Pressable onPress={swapLanguages}>
@@ -117,31 +164,18 @@ export default Translator = () => {
               color={isDarkMode ? "white" : "#736F72"}
             />
           </Pressable>
-          <Text
-            style={[styles.Heading, { color: isDarkMode ? "white" : "#736F72" }]}
-          >
+          <Text style={[styles.Heading, { color: isDarkMode ? "white" : "#736F72" }]} >
             {toLang === "si" ? "සිංහල" : "English"}
           </Text>
         </View>
-        <View
-          style={[
-            styles.inputContainer,
-            {
-              backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
-              borderColor: isDarkMode ? "#8a8a8a" : "#fff",
-            },
-          ]}
-        >
-          <TextInput
-            style={[
-              styles.additionalInput,
-              {
-                backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
-                color: isDarkMode ? "white" : "#E9E3E6"
-              },
-            ]}
+        <View style={[styles.inputContainer, { backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72", borderColor: isDarkMode ? "#8a8a8a" : "#fff", },]}  >
+          <TextInput style={[styles.additionalInput,
+          {
+            backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
+            color: isDarkMode ? "white" : "#E9E3E6"
+          },]}
             placeholder="Enter Text"
-            placeholderTextColor={isDarkMode ? "#ffffff" : "#E9E3E6"} 
+            placeholderTextColor={isDarkMode ? "#ffffff" : "#E9E3E6"}
             onChangeText={setenteredtext}
             value={enteredtext}
             underlineColorAndroid="transparent"
@@ -161,8 +195,8 @@ export default Translator = () => {
                 color={
                   enteredtext
                     ? isDarkMode
-                      ? "#ffffff" 
-                      : "#ffffff" 
+                      ? "#ffffff"
+                      : "#ffffff"
                     : "#aaaaaa"
                 }
               />
@@ -182,63 +216,56 @@ export default Translator = () => {
                         ? "white"
                         : "#fff"
                       : isDarkMode
-                      ? "#aaaaaa"
-                      : "#fff"
+                        ? "#aaaaaa"
+                        : "#fff"
                   }
                 />
               </TouchableOpacity>
             )}
           </View>
         </View>
-
-        <View
-          style={[
-            styles.inputContainer,
-            {
-              backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
-              borderColor: isDarkMode ? "#454545" : "#736F72",
-            },
-          ]}
-        >
+        <View style={[styles.inputContainer, {
+          backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
+          borderColor: isDarkMode ? "#454545" : "#736F72",
+        }]}>
           <TextInput
-            style={[
-              styles.additionalInput,
-              {
-                backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
-                color: isDarkMode ? "white" : "#fff"
-              },
-            ]}
-            placeholder="Translation"
-            placeholderTextColor={isDarkMode ? "#ffffff" : "#736F72"} 
-            onChangeText={settranslatedtext}
+            style={[styles.additionalInput, {
+              backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
+              color: isDarkMode ? "white" : "#fff"
+            }]}
+            placeholder='Translation'
+            placeholderTextColor={isDarkMode ? "#ffffff" : "#736F72"}
             value={translatedtext}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
+            underlineColorAndroid='transparent'
+            autoCapitalize='none'
             editable={false}
             multiline={true}
-            textAlignVertical="top"
+            textAlignVertical='top'
           />
-          <View style={styles.btn2}>
-            <TouchableOpacity
-              style={styles.speakButton}
-              onPress={copyToClipboard}
-              disabled={!translatedtext}
-            >
-              <AntDesign
-                name="copy1"
-                size={24}
-                color={
-                  translatedtext
-                    ? isDarkMode
-                      ? "white"
-                      : "#0288D1"
-                    : isDarkMode
+         {fromLang === "en" && culturalTranslation && (
+  <Text style={styles.culturalTranslation}>{culturalTranslation}</Text>
+)}
+          <TouchableOpacity
+          style={[styles.speakButton, {width:50,alignSelf:'flex-end',margin:10
+          
+        }]}
+            onPress={copyToClipboard}
+            disabled={!translatedtext}
+          >
+            <AntDesign
+              name="copy1"
+              size={24}
+              color={
+                translatedtext
+                  ? isDarkMode
+                    ? "white"
+                    : "#0288D1"
+                  : isDarkMode
                     ? "#aaaaaa"
                     : "#fff"
-                }
-              />
-            </TouchableOpacity>
-          </View>
+              }
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -283,12 +310,15 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
   },
-  inputContainer: {
-    width: "100%",
-    borderWidth: 2,
-    borderRadius: 15,
-    marginBottom: 15,
-    marginVertical: 10,
+  innerContainer: {
+    width: '100%',
+    justifyContent: 'center',
+  },
+  itemHeading: {
+    alignSelf: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
   },
   additionalInput: {
     width: "100%",
@@ -309,11 +339,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
   },
-  btn2: {
-    marginBottom: 10,
-    gap: 8,
-    paddingHorizontal: 10,
-    flexDirection: "row",
-    justifyContent: "flex-end",
+  culturalTranslation: {
+    width: '95%',
+    marginTop: 10,
+    marginLeft:10,
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'black',
   },
+ 
 });

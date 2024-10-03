@@ -41,7 +41,7 @@ export default Profile = () => {
             <AntDesign name="rightcircle" size={20} color="black" style={{marginTop:10}}/>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Report')}>
           <View style={styles.wordbut}>
             <Text style={styles.text}>Dictionary Report Management</Text>
             <AntDesign name="rightcircle" size={20} color="black" style={{marginTop:10}}/>
