@@ -252,16 +252,11 @@ export default Dictionary = () => {
               borderColor: isDarkMode ? "#454545" : "#736F72",
             }]}>
               <View style={styles.innerContainer}>
-                {item.headings && item.headings.slice(2, 5).some(heading => heading === "Cultural") ? (
-                  item.headings.slice(2, 5).map((heading, index) => (
-                    <Text
-                      key={index}
-                      style={[styles.itemHeading, { color: isDarkMode ? "#B2B2B2" : "#fff" }]}
-                    >
-                      {heading === "Cultural" ? (index === 1 ? `"${heading}"` : heading) : null}
-                    </Text>
-                  ))
-                ) : null}
+                {item.headings && item.headings.slice(3, 5).map((heading, index) => (
+                  <Text key={index} style={[styles.itemHeading, { color: isDarkMode ? "#B2B2B2" : "#fff" }]}>
+                    {index === 1 ? `${heading}` : heading}
+                  </Text>
+                ))}
               </View>
             </View>
           )}
