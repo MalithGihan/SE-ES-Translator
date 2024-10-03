@@ -14,7 +14,7 @@ import ProfileAdmin from '../Components/ProfileAdmin';
 import ProverbsReport from '../Components/Admin/ProverbsReport';
 
 const proTranslatorAdminScreen = 'ProTranslatorAdmin';
-const dictionaryAdminScreen = 'DictionaryAdmin';
+const DictionaryAdminScreen = 'DictionaryAdmin';
 const profileAdminScreen = 'ProfileAdmin'
 
 const Tab = createBottomTabNavigator();
@@ -51,12 +51,6 @@ function DictionaryAdminStack() {
         options={{ headerShown: false }}
       />
 
-      <Stack.Screen
-        name="Report"
-        component={Report}
-        options={{ headerShown: false }}
-      />
-
     </Stack.Navigator>
   );
 }
@@ -74,6 +68,11 @@ function ProfileAdminStack() {
         component={ProverbsReport}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="Report"
+        component={Report}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   )
 }
@@ -89,7 +88,7 @@ export default function HomeAdmin() {
 
           if (route.name === proTranslatorAdminScreen) {
             iconName = focused ? 'language' : 'language-outline';
-          } else if (route.name === dictionaryAdminScreen) {
+          } else if (route.name === DictionaryAdminScreen) {
             iconName = focused ? 'globe' : 'globe-outline';
           } else if (route.name === profileAdminScreen) {
             iconName = focused ? 'person' : 'person-outline';
@@ -105,7 +104,7 @@ export default function HomeAdmin() {
       })}
     >
       <Tab.Screen name={proTranslatorAdminScreen} component={ProTranslatorAdmin} />
-      <Tab.Screen name={dictionaryAdminScreen} component={DictionaryAdminStack} />
+      <Tab.Screen name={DictionaryAdminScreen} component={DictionaryAdminStack} />
       <Tab.Screen name={profileAdminScreen} component={ProfileAdminStack} />
     </Tab.Navigator>
   );

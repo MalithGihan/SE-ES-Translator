@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, Alert,Image } from 'react-native';
-import React, { useEffect, useState, useContext} from 'react';
+import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, Alert, Image } from 'react-native';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import * as Speech from 'expo-speech';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -115,42 +115,42 @@ export default Dictionary = () => {
   };
 
   return (
-    <View style={[styles.page,{backgroundColor: isDarkMode ? "#000" : "#E9E3E6"}]}>
+    <View style={[styles.page, { backgroundColor: isDarkMode ? "#000" : "#E9E3E6" }]}>
       {loading && <Text>Loading words...</Text>}
       {error && <Text>Error: {error}</Text>}
 
       <View style={styles.header}>
-      <Text
-            style={[
-              styles.headertit,
-              { color: isDarkMode ? "white" : "#736F72" },
-            ]}
-          >
-            Dictionary
-          </Text>
+        <Text
+          style={[
+            styles.headertit,
+            { color: isDarkMode ? "white" : "#736F72" },
+          ]}
+        >
+          Dictionary
+        </Text>
 
-          <Image
-            source={
-              isDarkMode
-                ? require("../assets/images/Untitled-1.png")
-                : require("../assets/images/blck logo2.png")
-            }
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
+        <Image
+          source={
+            isDarkMode
+              ? require("../assets/images/Untitled-1.png")
+              : require("../assets/images/blck logo2.png")
+          }
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </View>
       <View style={styles.formContainer}>
         <View style={styles.Headings}>
-          <Text style={[styles.Heading,{ color: isDarkMode ? "white" : "#736F72" }]}>English</Text>
+          <Text style={[styles.Heading, { color: isDarkMode ? "white" : "#736F72" }]}>English</Text>
           <AntDesign name="arrowright" size={24} color={isDarkMode ? "white" : "#736F72"} />
-          <Text style={[styles.Heading,{ color: isDarkMode ? "white" : "#736F72" }]}>සිංහල</Text>
+          <Text style={[styles.Heading, { color: isDarkMode ? "white" : "#736F72" }]}>සිංහල</Text>
         </View>
-        <View style={[styles.inputContainer,{
-              backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
-              borderColor: isDarkMode ? "#8a8a8a" : "#fff",
-            },]}>
+        <View style={[styles.inputContainer, {
+          backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
+          borderColor: isDarkMode ? "#8a8a8a" : "#fff",
+        },]}>
           <TextInput
-            style={[styles.additionalInput,{
+            style={[styles.additionalInput, {
               backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
               color: isDarkMode ? "white" : "#E9E3E6",
             }]}
@@ -175,8 +175,8 @@ export default Dictionary = () => {
                 color={
                   additionalInput1
                     ? isDarkMode
-                      ? "#ffffff" 
-                      : "#ffffff" 
+                      ? "#ffffff"
+                      : "#ffffff"
                     : "#aaaaaa"
                 }
               />
@@ -195,19 +195,19 @@ export default Dictionary = () => {
                       ? "white"
                       : "#fff"
                     : isDarkMode
-                    ? "#fff"
-                    : "#fff"
+                      ? "#fff"
+                      : "#fff"
                 }
               />
             </TouchableOpacity>
           </View>
         </View>
-        <View style={[styles.inputContainer,{
-              backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
-              borderColor: isDarkMode ? "#454545" : "#736F72",
-            }]}>
+        <View style={[styles.inputContainer, {
+          backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
+          borderColor: isDarkMode ? "#454545" : "#736F72",
+        }]}>
           <TextInput
-            style={[styles.additionalInput,{
+            style={[styles.additionalInput, {
               backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
               color: isDarkMode ? "white" : "#fff"
             }]}
@@ -220,9 +220,6 @@ export default Dictionary = () => {
             multiline={true}
             textAlignVertical='top'
           />
-          {culturalTranslation && (
-            <Text style={styles.culturalTranslation}>{culturalTranslation}</Text>
-          )}
           <TouchableOpacity
             style={styles.speakButton}
             onPress={copyToClipboard}
@@ -237,8 +234,8 @@ export default Dictionary = () => {
                     ? "white"
                     : "#0288D1"
                   : isDarkMode
-                  ? "#aaaaaa"
-                  : "#fff"
+                    ? "#aaaaaa"
+                    : "#fff"
               }
             />
           </TouchableOpacity>
@@ -250,18 +247,21 @@ export default Dictionary = () => {
           data={filteredWords}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={[styles.container,{
+            <View style={[styles.container, {
               backgroundColor: isDarkMode ? "#454545" : "#B2B2B2",
               borderColor: isDarkMode ? "#454545" : "#736F72",
             }]}>
               <View style={styles.innerContainer}>
-
-                {item.headings && item.headings.slice(2, 5).map((heading, index) => (
-                  <Text key={index} style={[styles.itemHeading,{ color: isDarkMode ? "#B2B2B2" : "#fff" }]}>
-
-                    {index === 1 ? `"${heading}"` : heading}
-                  </Text>
-                ))}
+                {item.headings && item.headings.slice(2, 5).some(heading => heading === "Cultural") ? (
+                  item.headings.slice(2, 5).map((heading, index) => (
+                    <Text
+                      key={index}
+                      style={[styles.itemHeading, { color: isDarkMode ? "#B2B2B2" : "#fff" }]}
+                    >
+                      {heading === "Cultural" ? (index === 1 ? `"${heading}"` : heading) : null}
+                    </Text>
+                  ))
+                ) : null}
               </View>
             </View>
           )}
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     width: "100%",
-    paddingHorizontal:15,
+    paddingHorizontal: 15,
     paddingTop: 20,
   },
   formContainer: {
@@ -308,7 +308,6 @@ const styles = StyleSheet.create({
   },
   Headings: {
     flexDirection: 'row',
-    padding: 20,
     width: '100%',
     justifyContent: 'space-evenly',
     alignItems: 'center'
@@ -392,7 +391,8 @@ const styles = StyleSheet.create({
     minHeight: 100,
     color: '#000000',
     backgroundColor: '#fff',
-    paddingTop: 15
+    paddingTop: 15,
+    fontWeight: 'bold'
   },
   speakButton: {
     marginTop: 10,
@@ -410,11 +410,5 @@ const styles = StyleSheet.create({
     gap: 8,
     flexDirection: 'row'
   },
-  culturalTranslation: {
-    width: '100%',
-    marginTop: 10,
-    fontSize: 16,
-    fontStyle: 'italic',
-    color: '#4CAF50',
-  },
+
 });
