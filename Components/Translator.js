@@ -16,8 +16,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Speech from "expo-speech";
 import * as Clipboard from "expo-clipboard";
 import { ThemeContext } from "./SettingsContext";
-import { RetrieveAllCWords } from '../utils/actions-proverbs/Cultural_words';
-
+import { RetrieveAllCWords, saveTranslation } from '../utils/actions-proverbs/Cultural_words';
 
 export default Translator = () => {
   const [words, setWords] = useState([]);
@@ -60,6 +59,7 @@ export default Translator = () => {
       }
     } catch (error) {
       console.error('Error fetching translation:', error);
+      Alert.alert("Error", "Error fetching translation."); // Use Alert here
       settranslatedtext('Error fetching translation.');
       setCulturalTranslation('');
       setFilteredWords([]);
@@ -201,6 +201,18 @@ export default Translator = () => {
                 }
               />
             </TouchableOpacity>
+            <View style={styles.speakButton}>
+              <TouchableOpacity
+                onPress={() => saveTranslation(enteredtext, translatedtext, fromLang, toLang)}
+                disabled={!enteredtext || !translatedtext}
+              >
+                <AntDesign
+                  name="staro"
+                  size={30}
+                  color={isDarkMode ? "white" : "white"}
+                />
+              </TouchableOpacity>
+            </View>
             {toLang !== "en" && (
               <TouchableOpacity
                 style={styles.speakButton}
@@ -242,13 +254,14 @@ export default Translator = () => {
             multiline={true}
             textAlignVertical='top'
           />
-         {fromLang === "en" && culturalTranslation && (
-  <Text style={styles.culturalTranslation}>{culturalTranslation}</Text>
-)}
+          {fromLang === "en" && culturalTranslation && (
+            <Text style={styles.culturalTranslation}>{culturalTranslation}</Text>
+          )}
           <TouchableOpacity
-          style={[styles.speakButton, {width:50,alignSelf:'flex-end',margin:10
-          
-        }]}
+            style={[styles.speakButton, {
+              width: 50, alignSelf: 'flex-end', margin: 10
+
+            }]}
             onPress={copyToClipboard}
             disabled={!translatedtext}
           >
@@ -266,6 +279,16 @@ export default Translator = () => {
               }
             />
           </TouchableOpacity>
+        </View>
+        <View>
+          <FlatList
+            data={filteredWords}
+            renderItem={({ item }) => (
+              <View key={item.id}>
+                <Text>{item.headings[0]}</Text>
+              </View>
+            )}
+          />
         </View>
       </View>
     </View>
@@ -342,10 +365,10 @@ const styles = StyleSheet.create({
   culturalTranslation: {
     width: '95%',
     marginTop: 10,
-    marginLeft:10,
+    marginLeft: 10,
     fontSize: 15,
     fontWeight: 'bold',
     color: 'black',
   },
- 
+
 });

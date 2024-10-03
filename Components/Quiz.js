@@ -1,19 +1,316 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useState, useContext } from "react";
+import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, ImageBackground, Image } from 'react-native';
+import React, { useState, useEffect, useContext } from "react";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { ThemeContext } from "./SettingsContext";
+import Toast from 'react-native-toast-message';
 
-export default Quiz = ({navigation}) => {
+export default Quiz = () => {
   const { isDarkMode } = useContext(ThemeContext);
+  const [quizData, setQuizData] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+  const [lives, setLives] = useState(3);
+  const [showResult, setShowResult] = useState(false);
+  const [allTranslations, setAllTranslations] = useState([]);
+
+  useEffect(() => {
+    const db = getDatabase();
+    const translationsRef = ref(db, 'translations');
+
+    onValue(translationsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const translations = Object.values(data).map(item => item.translatedtext);
+        setAllTranslations(translations);
+
+        const quizItems = Object.keys(data).map(key => ({
+          question: data[key].enteredtext,
+          correctAnswer: data[key].translatedtext,
+          options: generateOptions(data[key].translatedtext, translations)
+        }));
+        const shuffledQuizItems = shuffleArray(quizItems);
+        setQuizData(shuffledQuizItems);
+      }
+    });
+  }, []);
+
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
+  const generateOptions = (correctAnswer, translations) => {
+    const wrongAnswers = generateWrongAnswers(correctAnswer, translations);
+    const options = [...wrongAnswers, correctAnswer];
+    return shuffleArray(options);
+  };
+
+  const generateWrongAnswers = (correctAnswer, translations) => {
+    const wrongAnswers = [];
+    const availableAnswers = translations.filter(t => t !== correctAnswer);
+
+    while (wrongAnswers.length < 3 && availableAnswers.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableAnswers.length);
+      const randomWord = availableAnswers.splice(randomIndex, 1)[0];
+      wrongAnswers.push(randomWord);
+    }
+    while (wrongAnswers.length < 3) {
+      wrongAnswers.push(`Dummy Answer ${wrongAnswers.length + 1}`);
+    }
+    return wrongAnswers;
+  };
+
+  const handleAnswerSelect = (answer) => {
+    setSelectedAnswer(answer);
+  };
+
+  const handleNextQuestion = () => {
+    if (selectedAnswer === quizData[currentQuestionIndex].correctAnswer) {
+      setScore(score + 1);
+      Toast.show({
+        text1: "Correct!",
+        text2: "Good job!",
+        type: "success",
+        position: "top",
+        visibilityTime: 2000,
+      });
+    } else {
+      setLives(lives - 1);
+      Toast.show({
+        text1: "Wrong!",
+        text2: `The correct answer was: ${quizData[currentQuestionIndex].correctAnswer}`,
+        type: "error",
+        position: "top",
+        visibilityTime: 2000,
+      });
+    }
+
+    if (lives <= 1) {
+      setShowResult(true);
+      if (score >= highScore) {
+        setHighScore(score);
+      }
+      return;
+    }
+    setSelectedAnswer(null);
+    if (currentQuestionIndex < quizData.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      setShowResult(true);
+      if (score >= highScore) {
+        setHighScore(score);
+      }
+    }
+  };
+
+  const restartQuiz = () => {
+    const reshuffledQuizItems = shuffleArray([...quizData]);
+    setQuizData(reshuffledQuizItems);
+    setCurrentQuestionIndex(0);
+    setScore(0);
+    setLives(3);
+    setShowResult(false);
+  };
+
+  if (quizData.length === 0) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (showResult) {
+    return (
+      <ImageBackground
+        source={require("../assets/images/logo.png")}
+        style={styles.backgroundImage}
+        resizeMode="stretch"
+      >
+        <View style={styles.overlay} />
+        <View style={styles.container}>
+          <View >
+            <Text style={[styles.resultText, { fontWeight: 'bold', fontSize: 30 },]}>Your Score</Text>
+            <Text style={styles.resultText}>{score} / {quizData.length}</Text>
+          </View>
+          <Text style={styles.highScoreText}>Highest Score: {highScore}</Text>
+          <TouchableOpacity style={styles.btn1} onPress={restartQuiz} >
+            <Text style={styles.btn1text} >Restart Quiz</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    );
+  }
+
   return (
-    <View style={[
-      {
-        backgroundColor: isDarkMode ? "#000" : "#E9E3E6",
-      },
-    ]}>
-      <Text>Quiz</Text>
+    <View style={[styles.page, { backgroundColor: isDarkMode ? "#000" : "#E9E3E6", },]} >
+      <View style={styles.header}>
+        <Text style={[styles.headertit, { color: isDarkMode ? "white" : "#736F72" },]}>
+          Quize
+        </Text>
+        <Image
+          source={isDarkMode
+            ? require("../assets/images/Untitled-1.png")
+            : require("../assets/images/blck logo2.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </View>
+      <Text style={styles.livesText}>Lives: {lives}</Text>
+      <View style={styles.question}>
+        <Text style={[styles.questiontext, { fontWeight: 'bold', color: isDarkMode ? "white" : "black"  },]}>Question : </Text>
+        <Text style={[styles.questiontext, { color: isDarkMode ? "white" : "black"  },]}>{quizData[currentQuestionIndex].question}</Text>
+      </View>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
+      <Text 
+      style={[styles.infotext, { color: isDarkMode ? "white" : "black" },]}>Choose the correct Answer</Text>
+
+      <FlatList
+        data={quizData[currentQuestionIndex].options}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[styles.optionButton, { backgroundColor: selectedAnswer === item ? 'lightgray' : 'white' }]}
+            onPress={() => handleAnswerSelect(item)}
+          >
+            <Text style={styles.optionText}>{item}</Text>
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item) => item}
+      />
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={handleNextQuestion}
+        disabled={selectedAnswer === null}
+      ><Text style={styles.btntext}>Next Question</Text>
+      </TouchableOpacity>
+
     </View>
-  )
-}
+  );
+};
 
+const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    alignItems: "center",
+    width: 'auto',
+    backgroundColor: 'red'
+  },
 
-const styles = StyleSheet.create({})
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: '100%',
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    
+  },
+  logo: {
+    width: 100,
+    height: 40,
+    marginBottom: 20,
+  },
+  headertit: {
+    fontSize: 25,
+    fontWeight: "900",
+    marginLeft: 5,
+  },
+  question: {
+    width: '90%',
+    padding: 3,
+    fontWeight: '300',
+    marginBottom: 10,
+    marginTop:-20,
+  },
+  questiontext: {
+    fontSize: 18
+  },
+  infotext: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  livesText: {
+    position:'relative',
+    top:10,
+    fontSize: 16,
+    color: 'red',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    alignSelf: 'flex-end',
+    marginRight: 10
+  },
+  optionButton: {
+    marginVertical: 5,
+    width: 300,
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+  },
+  optionText: {
+    fontSize: 15,
+  },
+  resultText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: 'white',
+    alignSelf: 'center'
+  },
+  highScoreText: {
+    fontSize: 20,
+    marginBottom: 20,
+    color: 'white',
+    fontWeight: 'bold'
+  },
+  backgroundImage: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+  btn: {
+    width: '50%',
+    marginBottom: 200,
+    borderWidth: 3,
+    borderColor: 'blue',
+    borderRadius: 10,
+    padding: 8,
+    backgroundColor: 'white',
+    shadowColor: 'black',
+    elevation: 9,
+    alignSelf: 'center',
+  },
+  btn1: {
+    width: '50%',
+    marginBottom: '10%',
+    borderWidth: 3,
+    borderColor: 'white',
+    borderRadius: 10,
+    padding: 8,
+    backgroundColor: 'white',
+    shadowColor: 'black',
+    elevation: 9,
+    alignSelf: 'center',
+  },
+  btntext: {
+    alignSelf: 'center',
+    color: 'blue'
+  },
+  btn1text: {
+    alignSelf: 'center',
+    color: 'black',
+    fontWeight:'bold'
+  },
+});
+

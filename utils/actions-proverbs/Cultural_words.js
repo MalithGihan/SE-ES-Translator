@@ -1,5 +1,6 @@
-import { getDatabase, ref, push, set, update, get , remove } from 'firebase/database';
+import { getDatabase, ref, push, set, update, get , remove  } from 'firebase/database';
 import { getFirebaseApp } from "../firebaseHelper";
+import { Alert } from 'react-native';
 
 export const AddCWord = async (inputs) => {
     const nonEmptyInputs = inputs.filter(input => input.trim().length > 0);
@@ -109,3 +110,20 @@ export const DeleteCword = async (id) => {
         throw new Error('Error deleting word: ' + error.message);
     }
 };
+
+export const saveTranslation = async (enteredtext, translatedtext,fromLang, toLang) => {
+    const app = getFirebaseApp();
+    const db = getDatabase(app);
+    const translationsRef = ref(db, 'translations'); 
+    const newTranslation = {
+      enteredtext: enteredtext,
+      translatedtext: translatedtext,
+      fromLang:fromLang,
+      toLang:toLang,
+      timestamp: new Date().toISOString(), 
+    };
+    await push(translationsRef, newTranslation); 
+    Alert.alert("Saved", "Translation saved to the database.");
+  };
+
+ 
