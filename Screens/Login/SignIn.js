@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useReducer, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomInput from "./CustomInput";
 import CustomButton from "./CustomButton";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation , useFocusEffect } from "@react-navigation/native";
 import { reducer } from "../../utils/reducers/formReducers";
 import { validateInput } from "../../utils/actions/formActions";
 import { useDispatch } from "react-redux";
@@ -79,6 +79,14 @@ export default SignIn = () => {
       Alert.alert("An error occurred", error);
     }
   }, [error]);
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatchFormState({ inputId: 'email', validationResult: false, inputValue: '' });
+      dispatchFormState({ inputId: 'password', validationResult: false, inputValue: '' });
+      setError(null);
+    }, [])
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: "black" }}>

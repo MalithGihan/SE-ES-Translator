@@ -3,6 +3,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updatePassword
 } from "firebase/auth";
 
 import { child, getDatabase, set, ref,update,get } from "firebase/database";
@@ -139,20 +140,24 @@ export const updateUser = (userId, updatedData) => {
   return async (dispatch) => {
     const dbRef = ref(getDatabase());
     const userRef = child(dbRef, `user/${userId}`);
-
+    const auth = getAuth();
     try {
-      
       const snapshot = await get(userRef);
       if (snapshot.exists()) {
-  
         await update(userRef, updatedData);
         console.log('User data updated successfully');
 
-       
+        if (updatedData.password) {
+          const user = auth.currentUser;
+          if (user) {
+            await updatePassword(user, updatedData.password);
+            console.log('Password updated in Firebase Authentication');
+          } else {
+            throw new Error('User not authenticated');
+          }
+        }
         const updatedUserData = { ...snapshot.val(), ...updatedData };
-
         dispatch(authenticate({ userData: updatedUserData }));
-
         return updatedUserData; 
       } else {
         throw new Error('User not found');

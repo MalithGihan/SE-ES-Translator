@@ -281,14 +281,6 @@ export default Translator = () => {
           </TouchableOpacity>
         </View>
         <View>
-          <FlatList
-            data={filteredWords}
-            renderItem={({ item }) => (
-              <View key={item.id}>
-                <Text>{item.headings[0]}</Text>
-              </View>
-            )}
-          />
         </View>
       </View>
     </View>

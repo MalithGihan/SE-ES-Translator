@@ -132,11 +132,11 @@ export default Add_words = () => {
 
             {selectedOption === 'Numbers' && (
                 <>
-                    <Text style={styles.label}>Number Input 1</Text>
+                    <Text style={styles.label}>Numeric number</Text>
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
-                            placeholder='Enter first number'
+                            placeholder='Numeric number : ex (1)'
                             placeholderTextColor='#aaaaaa'
                             onChangeText={setInput1}
                             value={input1}
@@ -145,11 +145,11 @@ export default Add_words = () => {
                             keyboardType="numeric" 
                         />
                     </View>
-                    <Text style={styles.label}>Number Input 2</Text>
+                    <Text style={styles.label}>Number in Word</Text>
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
-                            placeholder='Enter second number'
+                            placeholder='Number in Word : ex (එක)'
                             placeholderTextColor='#aaaaaa'
                             onChangeText={setInput2}
                             value={input2}
