@@ -1,63 +1,113 @@
+import React, { useReducer, useState, useCallback, useEffect } from "react";
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
   View,
+  Text,
+  ScrollView,
   TouchableOpacity,
   Alert,
   Image,
+  StyleSheet,
 } from "react-native";
-import React, { useCallback, useReducer, useState, useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 import CustomInput from "./CustomInput";
 import CustomButton from "./CustomButton";
-import { useNavigation } from "@react-navigation/native";
-import { reducer } from "../../utils/reducers/formReducers";
-import { validateInput } from "../../utils/actions/formActions";
-import { useDispatch } from "react-redux";
+import CommonNavBtn from "../../Components/CommonNavBtn";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import { signUp } from "../../utils/actions/authActions";
 
-const isTestMode = true;
 
 const initialState = {
   inputValues: {
     fullName: "",
     email: "",
     password: "",
+    confirmPassword: "",
     role: "user",
   },
   inputValidities: {
     fullName: false,
     email: false,
     password: false,
+    confirmPassword: false,
   },
   formIsValid: false,
 };
 
-// Make sure to declare the function as a constant function expression.
+const reducer = (state, action) => {
+  const { validationResult, inputId, inputValue } = action;
+
+  const updatedValues = {
+    ...state.inputValues,
+    [inputId]: inputValue,
+  };
+
+  const updatedValidities = {
+    ...state.inputValidities,
+    [inputId]: validationResult,
+  };
+
+  let updatedFormIsValid = true;
+  for (const key in updatedValidities) {
+    if (updatedValidities[key] !== true) {
+      updatedFormIsValid = false;
+      break;
+    }
+  }
+
+  return {
+    inputValues: updatedValues,
+    inputValidities: updatedValidities,
+    formIsValid: updatedFormIsValid,
+  };
+};
+
 const SignUp = () => {
   const [formState, dispatchFormState] = useReducer(reducer, initialState);
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-  const inputChangedHandler = useCallback(
-    (inputId, inputValue) => {
-      const result = validateInput(inputId, inputValue); // Pass ID and value
-      dispatchFormState({
-        inputId,
-        validationResult: result || null,
-        inputValue,
-      });
-    },
-    [dispatchFormState]
-  );
+  const validateInput = (inputId, inputValue) => {
+    switch (inputId) {
+      case "fullName":
+        return inputValue.trim().length > 0 ? true : "Name is required";
+      case "email":
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(inputValue) ? true : "Invalid email format";
+      case "password":
+        return inputValue.length >= 6
+          ? true
+          : "Password must be at least 6 characters";
+      case "confirmPassword":
+        return inputValue.length >= 6 ? true : "Please confirm your password";
+      default:
+        return true;
+    }
+  };
+
+  const inputChangedHandler = useCallback((inputId, inputValue) => {
+    const validationResult = validateInput(inputId, inputValue);
+    dispatchFormState({
+      inputId,
+      validationResult: validationResult || null,
+      inputValue,
+    });
+  }, []);
 
   const authHandler = async () => {
     const role = "user";
 
     try {
+      if (
+        formState.inputValues.password !== formState.inputValues.confirmPassword
+      ) {
+        Alert.alert('Passwords do not match!');
+      }
+
       setIsLoading(true);
       const action = signUp(
         formState.inputValues.fullName,
@@ -80,12 +130,17 @@ const SignUp = () => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert("An error occured", error);
+      Alert.alert("An error occurred", error);
     }
   }, [error]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "black" }}>
+      <Image
+        source={require("../../assets/images/Untitled-1.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <ScrollView style={{ flex: 1, backgroundColor: "black", padding: 16 }}>
         <Text
           style={{
@@ -104,38 +159,99 @@ const SignUp = () => {
         <View style={{ marginVertical: 22 }}>
           <CustomInput
             id="fullName"
-            value={formState.inputValues.fullName} // Pass value from state
+            value={formState.inputValues.fullName}
             placeholder="Name"
             placeholderTextColor="gray"
-            errorText={formState.inputValidities.fullName} // Pass error message
+            errorText={formState.inputValidities.fullName || null}
             onInputChanged={inputChangedHandler}
           />
           <CustomInput
             id="email"
-            value={formState.inputValues.email} // Controlled value
+            value={formState.inputValues.email}
             placeholder="Email Address"
             placeholderTextColor="gray"
-            errorText={formState.inputValidities.email} // Pass error message
+            errorText={formState.inputValidities.email || null}
             onInputChanged={inputChangedHandler}
           />
-          <CustomInput
-            id="password"
-            value={formState.inputValues.password} // Controlled value
-            placeholder="Password"
-            placeholderTextColor="gray"
-            errorText={formState.inputValidities.password} // Pass error message
-            onInputChanged={inputChangedHandler}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: 10,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <CustomInput
+                id="password"
+                value={formState.inputValues.password}
+                placeholder="Password"
+                placeholderTextColor="gray"
+                secureTextEntry={!isPasswordVisible}
+                errorText={formState.inputValidities.password || null}
+                onInputChanged={inputChangedHandler}
+                style={{ width: "100%" }}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={() => setPasswordVisible(!isPasswordVisible)}
+              style={{ position: "absolute", right: 15, top: 25 }}
+            >
+              <AntDesign
+                name={isPasswordVisible ? "eye" : "eyeo"}
+                size={20}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: 20,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <CustomInput
+                id="confirmPassword"
+                value={formState.inputValues.confirmPassword}
+                placeholder="Confirm Password"
+                placeholderTextColor="gray"
+                secureTextEntry={!isConfirmPasswordVisible}
+                errorText={formState.inputValidities.confirmPassword || null}
+                onInputChanged={inputChangedHandler}
+                style={{ width: "100%" }}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={() =>
+                setConfirmPasswordVisible(!isConfirmPasswordVisible)
+              }
+              style={{ position: "absolute", right: 15, top: 25 }}
+            >
+              <AntDesign
+                name={isConfirmPasswordVisible ? "eye" : "eyeo"}
+                size={20}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
+
           <CustomButton
             title="Sign Up"
             onPress={authHandler}
             isLoading={isLoading}
-            style={{ margin: 10, backgroundColor: "white",borderColor: "white"  }}
+            style={{
+              margin: 10,
+              backgroundColor: "white",
+              borderColor: "white",
+            }}
           />
 
           <View style={styles.bottomConatiner}>
-            <Text style={{ fontSize: 12, color: "white", fontWeight:'400' }}>
-              Have an account already ?
+            <Text style={{ fontSize: 12, color: "white", fontWeight: "400" }}>
+              Have an account already?
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
               <Text style={{ fontSize: 14, fontWeight: "800", color: "white" }}>
@@ -146,23 +262,17 @@ const SignUp = () => {
           </View>
         </View>
       </ScrollView>
-      <Image
-        source={require("../../assets/images/Untitled-1.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+
       <View style={styles.centeredButton}>
         <CommonNavBtn
           title="Home"
           onPress={() => navigation.navigate("Home")}
-          style={{ backgroundColor: "white",borderColor: "white"  }}
+          style={{ backgroundColor: "white", borderColor: "white" }}
         />
       </View>
     </View>
   );
 };
-
-export default SignUp;
 
 const styles = StyleSheet.create({
   bottomConatiner: {
@@ -179,12 +289,13 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
   },
   logo: {
-    flex: -1,
-    width: "200%",
+    width: "40%",
     position: "absolute",
-    bottom: -100,
-    left: 20,
+    top: -150,
+    right: 20,
     opacity: 0.5,
-    transform: [{ rotate: "2500deg" }],
+    transform: [{ rotate: "0deg" }],
+    zIndex: 1,
   },
 });
+export default SignUp;

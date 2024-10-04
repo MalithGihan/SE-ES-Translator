@@ -1,8 +1,17 @@
-import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, ImageBackground, Image } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  FlatList,
+  TouchableOpacity,
+  ImageBackground,
+  Image,
+} from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { ThemeContext } from "./SettingsContext";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 
 export default Quiz = () => {
   const { isDarkMode } = useContext(ThemeContext);
@@ -17,18 +26,20 @@ export default Quiz = () => {
 
   useEffect(() => {
     const db = getDatabase();
-    const translationsRef = ref(db, 'translations');
+    const translationsRef = ref(db, "translations");
 
     onValue(translationsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const translations = Object.values(data).map(item => item.translatedtext);
+        const translations = Object.values(data).map(
+          (item) => item.translatedtext
+        );
         setAllTranslations(translations);
 
-        const quizItems = Object.keys(data).map(key => ({
+        const quizItems = Object.keys(data).map((key) => ({
           question: data[key].enteredtext,
           correctAnswer: data[key].translatedtext,
-          options: generateOptions(data[key].translatedtext, translations)
+          options: generateOptions(data[key].translatedtext, translations),
         }));
         const shuffledQuizItems = shuffleArray(quizItems);
         setQuizData(shuffledQuizItems);
@@ -52,7 +63,7 @@ export default Quiz = () => {
 
   const generateWrongAnswers = (correctAnswer, translations) => {
     const wrongAnswers = [];
-    const availableAnswers = translations.filter(t => t !== correctAnswer);
+    const availableAnswers = translations.filter((t) => t !== correctAnswer);
 
     while (wrongAnswers.length < 3 && availableAnswers.length > 0) {
       const randomIndex = Math.floor(Math.random() * availableAnswers.length);
@@ -124,19 +135,32 @@ export default Quiz = () => {
   if (showResult) {
     return (
       <ImageBackground
-        source={require("../assets/images/logo.png")}
-        style={styles.backgroundImage}
-        resizeMode="stretch"
+        style={[styles.backgroundImage, {backgroundColor: isDarkMode ? "#000" : "#E9E3E6"}]}
       >
-        <View style={styles.overlay} />
+        <Image
+          source={
+            isDarkMode
+              ? require("../assets/images/Untitled-1.png")
+              : require("../assets/images/blck logo2.png")
+          }
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
         <View style={styles.container}>
-          <View >
-            <Text style={[styles.resultText, { fontWeight: 'bold', fontSize: 30 },]}>Your Score</Text>
-            <Text style={styles.resultText}>{score} / {quizData.length}</Text>
+          <View>
+            <Text
+              style={[styles.resultText, { fontWeight: "bold", fontSize: 30, color: isDarkMode ? "white" : "#736F72" }]}
+            >
+              Your Score
+            </Text>
+            <Text style={[styles.resultCount,{ color: isDarkMode ? "white" : "#736F72" }]}>
+              {score} / {quizData.length}
+            </Text>
           </View>
-          <Text style={styles.highScoreText}>Highest Score: {highScore}</Text>
-          <TouchableOpacity style={styles.btn1} onPress={restartQuiz} >
-            <Text style={styles.btn1text} >Restart Quiz</Text>
+          <Text style={[styles.highScoreText,{ color: isDarkMode ? "white" : "#736F72" }]}>Highest Score: {highScore}</Text>
+          <TouchableOpacity style={styles.btn1} onPress={restartQuiz}>
+            <Text>Restart Quiz </Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -144,33 +168,71 @@ export default Quiz = () => {
   }
 
   return (
-    <View style={[styles.page, { backgroundColor: isDarkMode ? "#000" : "#E9E3E6", },]} >
+    <View
+      style={[
+        styles.page,
+        { backgroundColor: isDarkMode ? "#000" : "#E9E3E6" },
+      ]}
+    >
       <View style={styles.header}>
-        <Text style={[styles.headertit, { color: isDarkMode ? "white" : "#736F72" },]}>
+        <Text
+          style={[
+            styles.headertit,
+            { color: isDarkMode ? "white" : "#736F72" },
+          ]}
+        >
           Quize
         </Text>
         <Image
-          source={isDarkMode
-            ? require("../assets/images/Untitled-1.png")
-            : require("../assets/images/blck logo2.png")}
+          source={
+            isDarkMode
+              ? require("../assets/images/Untitled-1.png")
+              : require("../assets/images/blck logo2.png")
+          }
           style={styles.logo}
           resizeMode="contain"
         />
       </View>
-      <Text style={styles.livesText}>Lives: {lives}</Text>
+
+      <Text style={[styles.livesText1,{ color: isDarkMode ? "white" : "#736F72" }]}>Lives</Text>
+      <Text style={styles.count}>{lives}</Text>
+
       <View style={styles.question}>
-        <Text style={[styles.questiontext, { fontWeight: 'bold', color: isDarkMode ? "white" : "black"  },]}>Question : </Text>
-        <Text style={[styles.questiontext, { color: isDarkMode ? "white" : "black"  },]}>{quizData[currentQuestionIndex].question}</Text>
+        <Text
+          style={[
+            styles.questiontext,
+            { fontWeight: "bold", color: isDarkMode ? "white" : "#000"  },
+          ]}
+        >
+          Question
+        </Text>
+        <Text
+          style={[
+            styles.q2,
+            { color: isDarkMode ? "white" : "#000" },
+          ]}
+        >
+          {quizData[currentQuestionIndex].question}
+        </Text>
       </View>
       <Toast ref={(ref) => Toast.setRef(ref)} />
-      <Text 
-      style={[styles.infotext, { color: isDarkMode ? "white" : "black" },]}>Choose the correct Answer</Text>
+      <Text
+        style={[styles.infotext, { color: isDarkMode ? "white" : "#736F72" }]}
+      >
+        Choose the correct Answer
+      </Text>
 
       <FlatList
         data={quizData[currentQuestionIndex].options}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={[styles.optionButton, { backgroundColor: selectedAnswer === item ? 'lightgray' : 'white' }]}
+            style={[
+              styles.optionButton,
+              {
+                backgroundColor:
+                  selectedAnswer === item ? "#B2B2B2" : "white",
+              },
+            ]}
             onPress={() => handleAnswerSelect(item)}
           >
             <Text style={styles.optionText}>{item}</Text>
@@ -182,9 +244,9 @@ export default Quiz = () => {
         style={styles.btn}
         onPress={handleNextQuestion}
         disabled={selectedAnswer === null}
-      ><Text style={styles.btntext}>Next Question</Text>
+      >
+        <Text>Next </Text>
       </TouchableOpacity>
-
     </View>
   );
 };
@@ -193,22 +255,21 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     alignItems: "center",
-    width: 'auto',
-    backgroundColor: 'red'
+    width: "auto",
+    backgroundColor: "red",
   },
 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: '100%',
+    width: "100%",
     paddingTop: 20,
     paddingHorizontal: 20,
-    
   },
   logo: {
-    width: 100,
-    height: 40,
+    width: 150,
+    height: 150,
     marginBottom: 20,
   },
   headertit: {
@@ -216,101 +277,118 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     marginLeft: 5,
   },
+  livesText1: {
+    fontSize: 18,
+    color: 'black',
+    fontWeight: '400',
+    marginBottom: 5,
+    alignSelf: 'flex-end',
+    right:20,
+  },
+  count: {
+    fontSize: 25,
+    color: 'red', 
+    fontWeight: '900',
+    alignSelf: 'flex-end',
+    right: 40,
+    marginBottom:15
+  },
   question: {
-    width: '90%',
+    width: "100%",
     padding: 3,
-    fontWeight: '300',
+    left:15,
     marginBottom: 10,
-    marginTop:-20,
   },
   questiontext: {
-    fontSize: 18
+    fontSize: 15,
+    fontWeight: '500',
+    marginBottom:5
+  },
+  q2: {
+    fontSize: 25,
+    fontWeight:'900',
+    marginBottom:10
   },
   infotext: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  livesText: {
-    position:'relative',
-    top:10,
-    fontSize: 16,
-    color: 'red',
-    fontWeight: 'bold',
-    marginBottom: 10,
-    alignSelf: 'flex-end',
-    marginRight: 10
+    fontSize: 15,
+    alignSelf: 'flex-start',
+    fontWeight: "500",
+    marginBottom: 25,
+    marginLeft:15
   },
   optionButton: {
-    marginVertical: 5,
-    width: 300,
-    padding: 10,
+    width: '100%',
+    paddingHorizontal: 30,
+    paddingVertical:10,
     borderRadius: 10,
     marginBottom: 10,
-    borderWidth: 1,
   },
+  logo: {
+    width: 100,
+    height: 40,
+    marginBottom: 20,
+  },
+
+  backgroundImage:{
+    flex:1,
+    width:'100%',
+    height:'100%',
+    paddingHorizontal:15,
+    paddingTop:100,
+    alignItems:'center'              
+  },
+
+
+
   optionText: {
     fontSize: 15,
   },
   resultText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    color: 'white',
-    alignSelf: 'center'
+    alignSelf: "center",
   },
+
+  resultCount:{
+    fontSize:90,
+    fontWeight:'900',
+    textAlign:'center',
+    marginBottom:20
+  },
+
   highScoreText: {
     fontSize: 20,
-    marginBottom: 20,
-    color: 'white',
-    fontWeight: 'bold'
+    marginBottom: 30,
+    textAlign:'center',
+    fontWeight: "bold",
   },
-  backgroundImage: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  },
-  btn: {
-    width: '50%',
-    marginBottom: 200,
-    borderWidth: 3,
-    borderColor: 'blue',
-    borderRadius: 10,
-    padding: 8,
-    backgroundColor: 'white',
-    shadowColor: 'black',
-    elevation: 9,
-    alignSelf: 'center',
-  },
-  btn1: {
-    width: '50%',
-    marginBottom: '10%',
-    borderWidth: 3,
-    borderColor: 'white',
-    borderRadius: 10,
-    padding: 8,
-    backgroundColor: 'white',
-    shadowColor: 'black',
-    elevation: 9,
-    alignSelf: 'center',
-  },
-  btntext: {
-    alignSelf: 'center',
-    color: 'blue'
-  },
-  btn1text: {
-    alignSelf: 'center',
-    color: 'black',
-    fontWeight:'bold'
-  },
-});
 
+  btn: {
+    width: "50%",
+    marginTop: 40,
+    marginBottom: 120,
+    borderRadius: 10,
+    padding: 8,
+    backgroundColor: "white",
+    shadowColor: "black",
+    elevation: 9,
+    alignSelf: "center",
+    color:'black',
+    alignItems:'center'
+  },
+  
+  btn1: {
+    width: "100%",
+    borderColor: "white",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal:50,
+    backgroundColor: "white",
+    shadowColor: "black",
+    elevation: 9,
+    alignSelf: "center",
+    alignItems:'center'
+  },
+  
+});

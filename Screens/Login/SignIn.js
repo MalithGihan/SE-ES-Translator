@@ -16,6 +16,7 @@ import { reducer } from "../../utils/reducers/formReducers";
 import { validateInput } from "../../utils/actions/formActions";
 import { useDispatch } from "react-redux";
 import { signIn } from "../../utils/actions/authActions";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 const initialState = {
   inputValues: {
@@ -35,6 +36,7 @@ export default SignIn = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [error, setError] = useState();
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
 
   const inputChangedHandler = useCallback(
     (inputId, inputValue) => {
@@ -80,6 +82,12 @@ export default SignIn = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "black" }}>
+      <Image
+        source={require("../../assets/images/Untitled-1.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+
       <ScrollView style={{ flex: 1, backgroundColor: "black", padding: 16 }}>
         <Text
           style={{
@@ -104,22 +112,49 @@ export default SignIn = () => {
             errorText={formState.inputValidities.email}
             onInputChanged={inputChangedHandler}
           />
-          <CustomInput
-            id="password"
-            value={formState.inputValues.password}
-            placeholder="Password"
-            placeholderTextColor="gray"
-            errorText={formState.inputValidities.password}
-            onInputChanged={inputChangedHandler}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: 10,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <CustomInput
+                id="password"
+                value={formState.inputValues.password}
+                placeholder="Password"
+                placeholderTextColor="gray"
+                secureTextEntry={!isPasswordVisible}
+                errorText={formState.inputValidities.password || null}
+                onInputChanged={inputChangedHandler}
+                style={{ width: "100%" }}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={() => setPasswordVisible(!isPasswordVisible)}
+              style={{ position: "absolute", right: 15, top: 25 }}
+            >
+              <AntDesign
+                name={isPasswordVisible ? "eye" : "eyeo"}
+                size={20}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
           <CustomButton
             title="Sign In"
             onPress={authHandler}
             isLoading={isLoading}
-            style={{ margin: 10, backgroundColor: "white",borderColor: "white"  }}
+            style={{
+              margin: 10,
+              backgroundColor: "white",
+              borderColor: "white",
+            }}
           />
           <View style={styles.bottomContainer}>
-            <Text style={{ fontSize: 12, color: "white", fontWeight:'400'}}>
+            <Text style={{ fontSize: 12, color: "white", fontWeight: "400" }}>
               Don't have an Account?
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
@@ -131,16 +166,11 @@ export default SignIn = () => {
           </View>
         </View>
       </ScrollView>
-      <Image
-        source={require("../../assets/images/Untitled-1.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
       <View style={styles.centeredButton}>
         <CommonNavBtn
           title="Home"
           onPress={() => navigation.navigate("Home")}
-          style={{ backgroundColor: "white",borderColor: "white"  }}
+          style={{ backgroundColor: "white", borderColor: "white" }}
         />
       </View>
     </View>
@@ -162,12 +192,12 @@ const styles = StyleSheet.create({
     left: 20,
   },
   logo: {
-    flex: -1,
-    width: "200%",
+    width: "40%",
     position: "absolute",
-    bottom: -70,
-    left: 20,
+    top: -140,
+    right: 20,
     opacity: 0.5,
-    transform: [{ rotate: "2500deg" }],
+    transform: [{ rotate: "0deg" }],
+    zIndex: 1,
   },
 });

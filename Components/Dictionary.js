@@ -232,7 +232,7 @@ export default Dictionary = () => {
                 additionalInput2
                   ? isDarkMode
                     ? "white"
-                    : "#0288D1"
+                    : "#fff"
                   : isDarkMode
                     ? "#aaaaaa"
                     : "#fff"
@@ -302,28 +302,25 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   Headings: {
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-evenly',
-    alignItems: 'center'
-
+    flexDirection: "row",
+    padding: 20,
+    width: "100%",
+    justifyContent: "space-evenly",
+    alignItems: "center",
   },
   Heading: {
     fontSize: 15,
-    fontWeight: 'bold',
-
+    fontWeight: "bold",
   },
   inputContainer: {
-    width: 400,
+    width: '100%',
     flexDirection: 'column',
     alignItems: 'flex-end',
-    marginBottom: 10,
     borderColor: '#888',
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
-    marginTop: 20,
-    marginBottom: 20,
+    marginVertical:10,
     backgroundColor: '#fff',
   },
   input: {
