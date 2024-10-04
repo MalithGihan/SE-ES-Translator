@@ -12,6 +12,7 @@ import Edit_words from '../Components/Admin/Edit_words';
 import Report from '../Components/Admin/Report';
 import ProfileAdmin from '../Components/ProfileAdmin';
 import ProverbsReport from '../Components/Admin/ProverbsReport';
+import Add_ProWord from '../Components/Admin/Add_Proverb';
 
 const proTranslatorAdminScreen = 'ProTranslatorAdmin';
 const DictionaryAdminScreen = 'DictionaryAdmin';
@@ -53,6 +54,23 @@ function DictionaryAdminStack() {
 
     </Stack.Navigator>
   );
+}
+
+function ProVerbAdminStack () {
+  return(
+    <Stack.Navigator>
+       <Stack.Screen
+        name="ProTranslatorAdmin"
+        component={ProTranslatorAdmin}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Add_ProWord"
+        component={Add_ProWord}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  )
 }
 
 function ProfileAdminStack() {
@@ -103,7 +121,7 @@ export default function HomeAdmin() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name={proTranslatorAdminScreen} component={ProTranslatorAdmin} />
+      <Tab.Screen name={proTranslatorAdminScreen} component={ProVerbAdminStack} />
       <Tab.Screen name={DictionaryAdminScreen} component={DictionaryAdminStack} />
       <Tab.Screen name={profileAdminScreen} component={ProfileAdminStack} />
     </Tab.Navigator>

@@ -129,7 +129,7 @@ export default Quiz = () => {
   };
 
   if (quizData.length === 0) {
-    return <Text>Loading...</Text>;
+    return <Text style={{textAlign:'auto',alignContent:"center"}}>Loading...</Text>;
   }
 
   if (showResult) {

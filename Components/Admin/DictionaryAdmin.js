@@ -109,7 +109,7 @@ export default function DictionaryAdmin({ navigation }) {
         )}
       />
       <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddWord')}>
-        <Ionicons name="add-circle-outline" size={50} color="white" />
+        <Ionicons name="add-circle-outline" size={50} color= 'black' />
       </TouchableOpacity>
     </View>
   );
@@ -170,9 +170,9 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 30,
     right: 20,
-    backgroundColor: 'rgba(0, 0, 255, 0.6)',
+    tintColor:'#fff',
     borderRadius: 50,
     padding: 1,
     elevation: 10,

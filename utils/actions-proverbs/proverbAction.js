@@ -1,29 +1,22 @@
 import { getDatabase, ref, child, push, set, update, get, remove , query, orderByChild, startAt, endAt } from 'firebase/database';
 import { getFirebaseApp } from "../firebaseHelper";
 
-export const addProverb = async (sinhaleseProverb,singlishMeaning, englishTranslation) => {
+export const addProverb = async (sinhaleseProverb, singlishMeaning, englishTranslation, type) => {
   try {
     const app = getFirebaseApp();
-
-    const proverbData = {
-      sinhaleseProverb,
-      singlishMeaning,
-      englishTranslation,
-      addedDate: new Date().toISOString(),
-    };
-
     const dbRef = ref(getDatabase(app));
     const proverbsRef = child(dbRef, 'proverbs');
 
-    const newProverbRef = push(proverbsRef);
-
+    const newProverbRef = push(proverbsRef); 
     await set(newProverbRef, {
-      ...proverbData,
-      id: newProverbRef.key, 
+      sinhaleseProverb,
+      singlishMeaning,
+      englishTranslation,
+      type,
+      addedDate: new Date().toISOString(),
     });
 
-    console.log('Proverb added successfully:', proverbData);
-    return { ...proverbData, id: newProverbRef.key };
+    console.log('Proverb added successfully:', { sinhaleseProverb, singlishMeaning, englishTranslation, type });
   } catch (err) {
     console.error('Error adding proverb:', err);
     throw err;
@@ -49,7 +42,7 @@ export const getProverbs = async () => {
   }
 };
 
-export const updateProverb = async (id, sinhaleseProverb,singlishMeaning, englishTranslation) => {
+export const updateProverb = async (id, sinhaleseProverb,singlishMeaning, englishTranslation,type) => {
   try {
     const app = getFirebaseApp();
 
@@ -60,10 +53,11 @@ export const updateProverb = async (id, sinhaleseProverb,singlishMeaning, englis
       sinhaleseProverb,
       singlishMeaning,
       englishTranslation,
+      type,
       updatedDate: new Date().toISOString(),
     });
 
-    console.log('Proverb updated successfully:', { id, sinhaleseProverb,singlishMeaning, englishTranslation });
+    console.log('Proverb updated successfully:', { id, sinhaleseProverb,singlishMeaning, englishTranslation,type });
   } catch (err) {
     console.error('Error updating proverb:', err);
     throw err;
