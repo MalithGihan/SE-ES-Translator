@@ -193,7 +193,7 @@ export default Quiz = () => {
           resizeMode="contain"
         />
       </View>
-
+      
       <Text style={[styles.livesText1,{ color: isDarkMode ? "white" : "#736F72" }]}>Lives</Text>
       <Text style={styles.count}>{lives}</Text>
 
