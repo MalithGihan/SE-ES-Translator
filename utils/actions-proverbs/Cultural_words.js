@@ -111,19 +111,24 @@ export const DeleteCword = async (id) => {
     }
 };
 
-export const saveTranslation = async (enteredtext, translatedtext,fromLang, toLang) => {
-    const app = getFirebaseApp();
-    const db = getDatabase(app);
-    const translationsRef = ref(db, 'translations'); 
-    const newTranslation = {
-      enteredtext: enteredtext,
-      translatedtext: translatedtext,
-      fromLang:fromLang,
-      toLang:toLang,
-      timestamp: new Date().toISOString(), 
-    };
-    await push(translationsRef, newTranslation); 
-    Alert.alert("Saved", "Translation saved to the database.");
+export const saveTranslation = async (userId, enteredtext, translatedtext, fromLang, toLang) => {
+    try {
+      const app = getFirebaseApp();
+      const db = getDatabase(app); 
+  
+      const translationsRef = ref(db, `user/${userId}/translations`); 
+      const newTranslation = {
+        enteredtext,
+        translatedtext,
+        fromLang,
+        toLang,
+        timestamp: new Date().toISOString(), 
+      };
+      await push(translationsRef, newTranslation); 
+      Alert.alert("Saved", "Translation saved to the database."); 
+    } catch (error) {
+      console.error("Error saving translation:", error); 
+      Alert.alert("Error", "Failed to save translation. Please try again."); 
+    }
   };
-
- 
+  

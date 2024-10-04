@@ -16,6 +16,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Speech from "expo-speech";
 import * as Clipboard from "expo-clipboard";
 import { ThemeContext } from "./SettingsContext";
+import { getAuth } from 'firebase/auth';
 import { RetrieveAllCWords, saveTranslation } from '../utils/actions-proverbs/Cultural_words';
 
 export default Translator = () => {
@@ -27,11 +28,18 @@ export default Translator = () => {
   const [translatedtext, settranslatedtext] = useState("");
   const [fromLang, setFromLang] = useState("en");
   const [toLang, setToLang] = useState("si");
-
   const [culturalTranslation, setCulturalTranslation] = useState('');
   const { isDarkMode } = useContext(ThemeContext);
 
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  const userId = currentUser ? currentUser.uid : null;
+
   const onSubmit = async () => {
+    if (!currentUser) {
+      Alert.alert("Error", "User is not signed in.");
+      return;
+    }
     try {
       const response = await axios.request({
         method: "GET",
@@ -46,7 +54,6 @@ export default Translator = () => {
           'x-rapidapi-host': 'nlp-translation.p.rapidapi.com'
         },
       });
-
       if (response && response.data && response.data.translated_text) {
         const translatedText = response.data.translated_text[toLang];
         settranslatedtext(translatedText);
@@ -59,7 +66,7 @@ export default Translator = () => {
       }
     } catch (error) {
       console.error('Error fetching translation:', error);
-      Alert.alert("Error", "Error fetching translation."); // Use Alert here
+      Alert.alert("Error", "Error fetching translation.");
       settranslatedtext('Error fetching translation.');
       setCulturalTranslation('');
       setFilteredWords([]);
@@ -203,7 +210,7 @@ export default Translator = () => {
             </TouchableOpacity>
             <View style={styles.speakButton}>
               <TouchableOpacity
-                onPress={() => saveTranslation(enteredtext, translatedtext, fromLang, toLang)}
+                onPress={() => saveTranslation(userId, enteredtext, translatedtext, fromLang, toLang)}
                 disabled={!enteredtext || !translatedtext}
               >
                 <AntDesign
@@ -255,7 +262,7 @@ export default Translator = () => {
             textAlignVertical='top'
           />
           {fromLang === "en" && culturalTranslation && (
-            <Text style={[styles.culturalTranslation,{ color: isDarkMode ? "white" : "#000" }]}>{culturalTranslation}</Text>
+            <Text style={[styles.culturalTranslation, { color: isDarkMode ? "white" : "#000" }]}>{culturalTranslation}</Text>
           )}
           <TouchableOpacity
             style={[styles.speakButton, {
@@ -326,14 +333,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
   },
-  inputContainer:{
-    marginVertical:10,
-    borderRadius:10,
-    borderWidth:1
+  inputContainer: {
+    marginVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1
   },
   innerContainer: {
     width: '100%',
-    borderRadius:10,
+    borderRadius: 10,
     justifyContent: 'center',
   },
   itemHeading: {

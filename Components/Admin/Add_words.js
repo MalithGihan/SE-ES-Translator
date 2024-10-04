@@ -13,56 +13,56 @@ export default Add_words = () => {
     const [selectedOption, setSelectedOption] = useState('Cultural');
     const navigation = useNavigation();
 
+    const validateCulturalInputs = (inputs) => {
+        return inputs.length == 5;
+    };
+    const validateNumberInputs = (numberInputs) => {
+        return numberInputs.length == 2;
+    };
     const addCulturalWord = async () => {
         const inputs = [selectedOption, input1, input2, input3, input4].filter(input => input.trim().length > 0);
         const numberInputs = [input1, input2].filter(input => input.trim().length > 0);
-        
-        if (selectedOption === 'Cultural' && inputs.length > 0) {
-            try {
+        try {
+            if (selectedOption === 'Cultural' && validateCulturalInputs(inputs)) {
                 const newTodo = await AddCWord(inputs);
-                setInput1('');
-                setInput2('');
-                setInput3('');
-                setInput4('');
+                resetInputs();
                 Keyboard.dismiss();
                 navigation.navigate('Edit_words', { item: newTodo });
-
                 Toast.show({
                     type: 'success',
                     text1: 'Success',
                     text2: 'Cultural words added successfully!'
                 });
-            } catch (error) {
-                console.error('Error adding cultural word:', error);
-                Toast.show({
-                    type: 'error',
-                    text1: 'Error',
-                    text2: `Error adding cultural word: ${error.message}`
-                });
-            }
-        } else if (selectedOption === 'Numbers' && numberInputs.length > 0) {
-            const newTodo = await AddCWord(inputs);
-                setInput1('');
-                setInput2('');
-                setInput3('');
-                setInput4('');
+            } else if (selectedOption === 'Numbers' && validateNumberInputs(numberInputs)) {
+                const newTodo = await AddCWord(inputs);
+                resetInputs();
                 Keyboard.dismiss();
                 navigation.navigate('Edit_words', { item: newTodo });
-            console.log("Number inputs:", numberInputs);
-            Toast.show({
-                type: 'success',
-                text1: 'Success',
-                text2: 'Numbers added successfully!'
-            });
-            setInput1('');
-            setInput2('');
-        } else {
+
+                console.log("Number inputs:", numberInputs);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Success',
+                    text2: 'Numbers added successfully!'
+                });
+            } else {
+                throw new Error('Please enter all input.');
+            }
+        } catch (error) {
+            console.error('Please enter all input.:', error);
             Toast.show({
                 type: 'error',
-                text1: 'Input Error',
-                text2: 'Please enter at least one non-empty input.'
+                text1: 'Please enter all input.',
+                text2: `Please enter all input.`
             });
         }
+    };
+
+    const resetInputs = () => {
+        setInput1('');
+        setInput2('');
+        setInput3('');
+        setInput4('');
     };
 
     return (
@@ -142,7 +142,7 @@ export default Add_words = () => {
                             value={input1}
                             underlineColorAndroid='transparent'
                             autoCapitalize='none'
-                            keyboardType="numeric" 
+                            keyboardType="numeric"
                         />
                     </View>
                     <Text style={styles.label}>Number in Word</Text>

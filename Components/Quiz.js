@@ -12,6 +12,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { ThemeContext } from "./SettingsContext";
 import Toast from "react-native-toast-message";
+import { getAuth } from "firebase/auth";
 
 export default Quiz = () => {
   const { isDarkMode } = useContext(ThemeContext);
@@ -24,9 +25,13 @@ export default Quiz = () => {
   const [showResult, setShowResult] = useState(false);
   const [allTranslations, setAllTranslations] = useState([]);
 
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  const userId = currentUser ? currentUser.uid : null;
+
   useEffect(() => {
     const db = getDatabase();
-    const translationsRef = ref(db, "translations");
+    const translationsRef = ref(db, `user/${userId}/translations`);
 
     onValue(translationsRef, (snapshot) => {
       const data = snapshot.val();
@@ -129,13 +134,13 @@ export default Quiz = () => {
   };
 
   if (quizData.length === 0) {
-    return <Text style={{textAlign:'auto',alignContent:"center"}}>Loading...</Text>;
+    return <Text style={{ textAlign: 'auto', alignContent: "center" }}>Loading...</Text>;
   }
 
   if (showResult) {
     return (
       <ImageBackground
-        style={[styles.backgroundImage, {backgroundColor: isDarkMode ? "#000" : "#E9E3E6"}]}
+        style={[styles.backgroundImage, { backgroundColor: isDarkMode ? "#000" : "#E9E3E6" }]}
       >
         <Image
           source={
@@ -154,11 +159,11 @@ export default Quiz = () => {
             >
               Your Score
             </Text>
-            <Text style={[styles.resultCount,{ color: isDarkMode ? "white" : "#736F72" }]}>
+            <Text style={[styles.resultCount, { color: isDarkMode ? "white" : "#736F72" }]}>
               {score} / {quizData.length}
             </Text>
           </View>
-          <Text style={[styles.highScoreText,{ color: isDarkMode ? "white" : "#736F72" }]}>Highest Score: {highScore}</Text>
+          <Text style={[styles.highScoreText, { color: isDarkMode ? "white" : "#736F72" }]}>Highest Score: {highScore}</Text>
           <TouchableOpacity style={styles.btn1} onPress={restartQuiz}>
             <Text>Restart Quiz </Text>
           </TouchableOpacity>
@@ -193,15 +198,15 @@ export default Quiz = () => {
           resizeMode="contain"
         />
       </View>
-      
-      <Text style={[styles.livesText1,{ color: isDarkMode ? "white" : "#736F72" }]}>Lives</Text>
+
+      <Text style={[styles.livesText1, { color: isDarkMode ? "white" : "#736F72" }]}>Lives</Text>
       <Text style={styles.count}>{lives}</Text>
 
       <View style={styles.question}>
         <Text
           style={[
             styles.questiontext,
-            { fontWeight: "bold", color: isDarkMode ? "white" : "#000"  },
+            { fontWeight: "bold", color: isDarkMode ? "white" : "#000" },
           ]}
         >
           Question
@@ -283,43 +288,43 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginBottom: 5,
     alignSelf: 'flex-end',
-    right:20,
+    right: 20,
   },
   count: {
     fontSize: 25,
-    color: 'red', 
+    color: 'red',
     fontWeight: '900',
     alignSelf: 'flex-end',
     right: 40,
-    marginBottom:15
+    marginBottom: 15
   },
   question: {
     width: "100%",
     padding: 3,
-    left:15,
+    left: 15,
     marginBottom: 10,
   },
   questiontext: {
     fontSize: 15,
     fontWeight: '500',
-    marginBottom:5
+    marginBottom: 5
   },
   q2: {
     fontSize: 25,
-    fontWeight:'900',
-    marginBottom:10
+    fontWeight: '900',
+    marginBottom: 10
   },
   infotext: {
     fontSize: 15,
     alignSelf: 'flex-start',
     fontWeight: "500",
     marginBottom: 25,
-    marginLeft:15
+    marginLeft: 15
   },
   optionButton: {
     width: '100%',
     paddingHorizontal: 30,
-    paddingVertical:10,
+    paddingVertical: 10,
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -329,13 +334,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  backgroundImage:{
-    flex:1,
-    width:'100%',
-    height:'100%',
-    paddingHorizontal:15,
-    paddingTop:100,
-    alignItems:'center'              
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    paddingHorizontal: 15,
+    paddingTop: 100,
+    alignItems: 'center'
   },
 
 
@@ -350,17 +355,17 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
-  resultCount:{
-    fontSize:90,
-    fontWeight:'900',
-    textAlign:'center',
-    marginBottom:20
+  resultCount: {
+    fontSize: 90,
+    fontWeight: '900',
+    textAlign: 'center',
+    marginBottom: 20
   },
 
   highScoreText: {
     fontSize: 20,
     marginBottom: 30,
-    textAlign:'center',
+    textAlign: 'center',
     fontWeight: "bold",
   },
 
@@ -374,21 +379,21 @@ const styles = StyleSheet.create({
     shadowColor: "black",
     elevation: 9,
     alignSelf: "center",
-    color:'black',
-    alignItems:'center'
+    color: 'black',
+    alignItems: 'center'
   },
-  
+
   btn1: {
     width: "100%",
     borderColor: "white",
     borderRadius: 10,
     paddingVertical: 10,
-    paddingHorizontal:50,
+    paddingHorizontal: 50,
     backgroundColor: "white",
     shadowColor: "black",
     elevation: 9,
     alignSelf: "center",
-    alignItems:'center'
+    alignItems: 'center'
   },
-  
+
 });
