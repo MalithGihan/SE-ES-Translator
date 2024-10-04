@@ -192,10 +192,10 @@ const styles = StyleSheet.create({
     left: 20,
   },
   logo: {
-    width: "40%",
+    width: "130%",
     position: "absolute",
     top: -140,
-    right: 20,
+    left: 100,
     opacity: 0.5,
     transform: [{ rotate: "0deg" }],
     zIndex: 1,

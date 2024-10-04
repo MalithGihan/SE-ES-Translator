@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import Translator from '../Components/Translator';
 import ProTranslator from '../Components/ProTranslator';
@@ -8,6 +9,7 @@ import Dictionary from '../Components/Dictionary';
 import Quiz from '../Components/Quiz';
 import Profile from '../Components/Profile';
 import { ThemeContext } from '../Components/SettingsContext'
+import Edituser from './Login/Edituser';
 
 const translatorScreen = 'Translator';
 const proTranslatorScreen = 'ProTranslator';
@@ -15,10 +17,29 @@ const profileScreen = 'Profile';
 const dictionaryScreen = 'Dictionary';
 const quizScreen = 'Quiz';
 
+
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+function ProfileStack() {
+  return(
+    <Stack.Navigator>
+        <Stack.Screen
+        name="Profile_"
+        component={Profile}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Edituser"
+        component={Edituser}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  )
+}
 
 export default function HomeUser() {
-  const { isDarkMode } = useContext(ThemeContext);  // Get the dark mode status from ThemeContext
+  const { isDarkMode } = useContext(ThemeContext); 
 
   return (
     <Tab.Navigator
@@ -60,7 +81,7 @@ export default function HomeUser() {
       <Tab.Screen name={proTranslatorScreen} component={ProTranslator} />
       <Tab.Screen name={dictionaryScreen} component={Dictionary} />
       <Tab.Screen name={quizScreen} component={Quiz} />
-      <Tab.Screen name={profileScreen} component={Profile} />
+      <Tab.Screen name={profileScreen} component={ProfileStack} />
     </Tab.Navigator>
   );
 }

@@ -1,32 +1,41 @@
 import React, { useState, useEffect } from "react";
-import { View, TextInput, StyleSheet, Alert, Text } from "react-native";
-import CustomButton from "../../Screens/Login/CustomButton";
 import {
-  addProverb,
-  getProverbs,
-  updateProverb,
-  deleteProverb,
-} from "../../utils/actions-proverbs/proverbAction.js";
-import { ScrollView } from "react-native";
+  View,
+  TextInput,
+  StyleSheet,
+  Alert,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { getProverbs, deleteProverb } from "../../utils/actions-proverbs/proverbAction.js";
+import { Picker } from "@react-native-picker/picker";
 import Toast from "react-native-toast-message";
+import { FontAwesome } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default ProTranslatorAdmin = ({ navigation }) => {
-  const [sinhaleseProverb, setSinhaleseProverb] = useState("");
-  const [singlishMeaning, setSinglishMeaning] = useState("");
-  const [englishTranslation, setEnglishTranslation] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [proverbs, setProverbs] = useState([]);
-  const [editingProverb, setEditingProverb] = useState(null);
+const ProverbListScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [proverbs, setProverbs] = useState([]);
   const [filteredProverbs, setFilteredProverbs] = useState([]);
+  const [typeFilter, setTypeFilter] = useState("All");
+
+  // Fetch proverbs when the component mounts or when screen is focused
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchProverbs();
+    });
+
+    // Clean up the listener on component unmount
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
-    fetchProverbs();
-  }, []);
+    let filtered = proverbs;
 
-  useEffect(() => {
+    // Filter by search query
     if (searchQuery) {
-      const filtered = proverbs.filter(
+      filtered = filtered.filter(
         (proverb) =>
           proverb.sinhaleseProverb
             .toLowerCase()
@@ -38,11 +47,15 @@ export default ProTranslatorAdmin = ({ navigation }) => {
             .toLowerCase()
             .includes(searchQuery.toLowerCase())
       );
-      setFilteredProverbs(filtered);
-    } else {
-      setFilteredProverbs(proverbs);
     }
-  }, [searchQuery, proverbs]);
+
+    // Filter by type
+    if (typeFilter && typeFilter !== "All") {
+      filtered = filtered.filter((proverb) => proverb.type === typeFilter);
+    }
+
+    setFilteredProverbs(filtered);
+  }, [searchQuery, proverbs, typeFilter]);
 
   const fetchProverbs = async () => {
     try {
@@ -52,69 +65,6 @@ export default ProTranslatorAdmin = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching proverbs:", error);
     }
-  };
-
-  const createOrUpdateProverb = async () => {
-    if (!sinhaleseProverb || !englishTranslation) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Both fields are required.",
-        position: "bottom",
-        visibilityTime: 2000,
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      if (editingProverb) {
-        await updateProverb(
-          editingProverb.id,
-          sinhaleseProverb,
-          singlishMeaning,
-          englishTranslation
-        );
-        Toast.show({
-          type: "success",
-          text1: "Added!",
-          text2: "Proverb updated successfully!",
-          position: "bottom",
-          visibilityTime: 2000,
-        });
-      } else {
-        await addProverb(sinhaleseProverb, singlishMeaning, englishTranslation);
-        Toast.show({
-          type: "success",
-          text1: "Added!",
-          text2: "Proverb updated successfully!",
-          position: "bottom",
-          visibilityTime: 2000,
-        });
-      }
-      setSinhaleseProverb("");
-      setSinglishMeaning("");
-      setEnglishTranslation("");
-      setEditingProverb(null);
-      fetchProverbs();
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to save proverb.",
-        position: "bottom",
-        visibilityTime: 2000,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleEdit = (proverb) => {
-    setEditingProverb(proverb);
-    setSinhaleseProverb(proverb.sinhaleseProverb);
-    setSinglishMeaning(proverb.singlishMeaning);
-    setEnglishTranslation(proverb.englishTranslation);
   };
 
   const handleDelete = (proverbId) => {
@@ -132,7 +82,7 @@ export default ProTranslatorAdmin = ({ navigation }) => {
           onPress: async () => {
             try {
               await deleteProverb(proverbId);
-              fetchProverbs();
+              fetchProverbs(); // Refetch proverbs after delete
             } catch (error) {
               Toast.show({
                 type: "error",
@@ -150,37 +100,16 @@ export default ProTranslatorAdmin = ({ navigation }) => {
     );
   };
 
+  const handleEdit = async (proverb) => {
+    navigation.navigate("Add_ProWord", { proverb });
+  };
+
   return (
     <View style={{ flex: 1 }}>
+      <View style={styles.header}>
+        <Text style={styles.headertit}>Proverb Management</Text>
+      </View>
       <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Sinhalese Proverb"
-          placeholderTextColor="#aaaaaa"
-          onChangeText={setSinhaleseProverb}
-          value={sinhaleseProverb}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Singlish Meaning"
-          placeholderTextColor="#aaaaaa"
-          onChangeText={setSinglishMeaning}
-          value={singlishMeaning}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Enter English Translation"
-          placeholderTextColor="#aaaaaa"
-          onChangeText={setEnglishTranslation}
-          value={englishTranslation}
-        />
-        <CustomButton
-          title={editingProverb ? "Save Changes" : "Add Proverb"}
-          onPress={createOrUpdateProverb}
-          isLoading={isLoading}
-          style={{ marginVertical: 8 }}
-        />
-
         <TextInput
           style={styles.searchInput}
           placeholder="Search by Sinhalese Proverb or English Translation"
@@ -188,32 +117,50 @@ export default ProTranslatorAdmin = ({ navigation }) => {
           onChangeText={setSearchQuery}
         />
 
+        <Picker
+          selectedValue={typeFilter}
+          onValueChange={(itemValue) => setTypeFilter(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="All" value="All" />
+          <Picker.Item label="ප්‍රස්තා පිරුළු" value="Proverb" />
+          <Picker.Item label="නිසදැස්" value="Nisadas" />
+        </Picker>
+
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           {filteredProverbs.map((proverb) => (
             <View key={proverb.id} style={styles.proverbContainer}>
-              <Text style={styles.proverbText}>{proverb.sinhaleseProverb}</Text>
+              <Text style={styles.Text1}>{proverb.sinhaleseProverb}</Text>
               <Text style={styles.meaningText}>{proverb.singlishMeaning}</Text>
-              <Text style={styles.translationText}>
-                {proverb.englishTranslation}
-              </Text>
-              <CustomButton
-                title="Edit"
-                onPress={() => handleEdit(proverb)}
-                isLoading={isLoading}
-              />
-              <CustomButton
-                title="Delete"
-                onPress={() => handleDelete(proverb.id)}
-                isLoading={isLoading}
-                style={{ borderColor: "red", color: "red" }}
-              />
+              <Text style={styles.Text1}>{proverb.englishTranslation}</Text>
+              <Text style={styles.meaningText2}>{proverb.type}</Text>
+
+              <View style={styles.btn}>
+                <FontAwesome
+                  name="edit"
+                  color="black"
+                  onPress={() => handleEdit(proverb)}
+                  style={styles.deletebtn}
+                />
+                <FontAwesome
+                  name="trash"
+                  color="red"
+                  onPress={() => handleDelete(proverb.id)}
+                  style={styles.deletebtn}
+                />
+              </View>
             </View>
           ))}
         </ScrollView>
+
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate("Add_ProWord")}
+        >
+          <Ionicons name="add-circle-outline" size={60} color="black" />
+        </TouchableOpacity>
       </View>
-      <>
-        <Toast />
-      </>
+      <Toast />
     </View>
   );
 };
@@ -221,43 +168,80 @@ export default ProTranslatorAdmin = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 15,
   },
-  input: {
-    borderBottomWidth: 1,
-    borderColor: "#ddd",
-    padding: 8,
-    marginVertical: 8,
+  header: {
+    width: "100%",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    paddingHorizontal: 5,
   },
-  proverbContainer: {
-    marginVertical: 15,
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: "white",
+  headertit: {
+    fontSize: 25,
+    fontWeight: "900",
+    marginLeft: 5,
+    marginTop: 15,
+    marginBottom: 20,
   },
   searchInput: {
-    height: 50,
-    paddingVertical: 10,
-    borderColor: "black",
-    borderWidth: 2,
-    borderRadius: 10,
-    paddingLeft: 10,
-  },
-  scrollViewContent: {
+    borderBottomWidth: 2,
+    borderColor: "#000",
     padding: 10,
   },
-  proverbText: {
-    fontSize: 20,
-    margin: 5,
+  picker: {
+    marginVertical: 5,
+    backgroundColor: "#aaa",
+    marginTop: 15,
+  },
+  proverbContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginVertical: 5,
+    padding: 10,
+    shadowColor: "#aaa",
+    gap: 10,
+  },
+  Text1: {
+    fontSize: 15,
+    fontWeight: "800",
   },
   meaningText: {
-    fontSize: 15,
-    margin: 5,
-    fontWeight: "300",
-  },
-  translationText: {
-    fontSize: 25,
-    margin: 5,
+    fontSize: 13,
     fontWeight: "500",
+    color: "#333",
+  },
+  meaningText2: {
+    width: 90,
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "800",
+    borderRadius: 5,
+    color: "#fff",
+    backgroundColor: "#000",
+    padding: 2,
+  },
+  btn: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  deletebtn: {
+    fontSize: 30,
+    paddingHorizontal: 8,
+  },
+  scrollViewContent: {
+    paddingBottom: 100,
+  },
+  addButton: {
+    position: "absolute",
+    bottom: 30,
+    right: 20,
+    tintColor: "#fff",
+    borderRadius: 50,
+    padding: 1,
+    elevation: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
+
+export default ProverbListScreen;

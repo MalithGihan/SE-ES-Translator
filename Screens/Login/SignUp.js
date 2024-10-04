@@ -120,7 +120,7 @@ const SignUp = () => {
       setError(null);
       Alert.alert("Account Successfully created", "Account created");
       setIsLoading(false);
-      navigation.navigate("Home");
+      navigation.navigate("SignIn");
     } catch (error) {
       console.log(error);
       setIsLoading(false);
@@ -289,10 +289,10 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
   },
   logo: {
-    width: "40%",
+    width: "130%",
     position: "absolute",
-    top: -150,
-    right: 20,
+    top: -140,
+    right: 140,
     opacity: 0.5,
     transform: [{ rotate: "0deg" }],
     zIndex: 1,

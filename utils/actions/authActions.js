@@ -5,14 +5,13 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 
-import { child, getDatabase, set, ref } from "firebase/database";
+import { child, getDatabase, set, ref,update,get } from "firebase/database";
 import { signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authenticate } from "../../store/authSlice";
 import { getUserData } from "./userActions";
 import { clearAuth } from '../../store/authSlice';
 
-//Sign Up Hook
 export const signUp = (fullName, email, password,role) => {
   return async (dispatch) => {
     const app = getFirebaseApp();
@@ -133,4 +132,34 @@ const saveToDataStorage = (token, userId, expiryDate) => {
       expiryDate: expiryDate.toISOString(),
     })
   );
+};
+
+
+export const updateUser = (userId, updatedData) => {
+  return async (dispatch) => {
+    const dbRef = ref(getDatabase());
+    const userRef = child(dbRef, `user/${userId}`);
+
+    try {
+      
+      const snapshot = await get(userRef);
+      if (snapshot.exists()) {
+  
+        await update(userRef, updatedData);
+        console.log('User data updated successfully');
+
+       
+        const updatedUserData = { ...snapshot.val(), ...updatedData };
+
+        dispatch(authenticate({ userData: updatedUserData }));
+
+        return updatedUserData; 
+      } else {
+        throw new Error('User not found');
+      }
+    } catch (error) {
+      console.log(error);
+      throw new Error('Could not update user data: ' + error.message);
+    }
+  };
 };

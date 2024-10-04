@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, Switch,Image } from "react-native";
+import { StyleSheet, Text, View, Switch, Image, TouchableOpacity } from "react-native";
 import React, { useContext } from "react";
-import { ThemeContext} from "./SettingsContext";
+import { ThemeContext } from "./SettingsContext";
 import CustomButton from "../Screens/Login/CustomButton";
 import { logout } from "../utils/actions/authActions";
 import { useSelector, useDispatch } from "react-redux";
+import Icon from 'react-native-vector-icons/FontAwesome'; 
 
 export default Profile = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -19,6 +20,10 @@ export default Profile = ({ navigation }) => {
     }
   };
 
+  const navigateToEditUser = () => {
+    navigation.navigate("Edituser"); 
+  };
+
   return (
     <View
       style={[
@@ -28,38 +33,34 @@ export default Profile = ({ navigation }) => {
         },
       ]}
     >
-       <View style={styles.header}>
-
-          <Image
-            source={
-              isDarkMode
-                ? require("../assets/images/Untitled-1.png")
-                : require("../assets/images/blck logo2.png")
-            }
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
+      <View style={styles.header}>
+        <Image
+          source={
+            isDarkMode
+              ? require("../assets/images/Untitled-1.png")
+              : require("../assets/images/blck logo2.png")
+          }
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <TouchableOpacity onPress={navigateToEditUser}>
+          <Icon name="edit" size={24} color={isDarkMode ? "white" : "black"} />
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.container2}>
-        <Text style={[styles.title,  { color: isDarkMode ? "white" : "#736F72" },]}>
+        <Text style={[styles.title, { color: isDarkMode ? "white" : "#736F72" }]}>
           Welcome {userData && userData.fullName ? userData.fullName : "User"}
         </Text>
         {userData ? (
-          <View style={[styles.info,{  backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",}]}>
-            <Text
-              style={[styles.text1, { color: isDarkMode ? "white" : "white" }]}
-            >
+          <View style={[styles.info, { backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72" }]}>
+            <Text style={[styles.text1, { color: isDarkMode ? "white" : "white" }]}>
               {userData.fullName}
             </Text>
-            <Text
-              style={[styles.text, { color: isDarkMode ? "white" : "white" }]}
-            >
+            <Text style={[styles.text, { color: isDarkMode ? "white" : "white" }]}>
               User Role: {userData.role}
             </Text>
-            <Text
-              style={[styles.text, { color: isDarkMode ? "white" : "white" }]}
-            >
+            <Text style={[styles.text, { color: isDarkMode ? "white" : "white" }]}>
               Email: {userData.email}
             </Text>
           </View>
@@ -70,9 +71,7 @@ export default Profile = ({ navigation }) => {
 
       <View style={styles.setting}>
         <View style={styles.setting1}>
-          <Text
-            style={[styles.text, { color: isDarkMode ? "white" : "black" }]}
-          >
+          <Text style={[styles.text, { color: isDarkMode ? "white" : "black" }]}>
             Dark Mode
           </Text>
           <Switch value={isDarkMode} onValueChange={toggleTheme} />
@@ -80,12 +79,12 @@ export default Profile = ({ navigation }) => {
       </View>
 
       <View style={styles.bottom}>
-      <CustomButton
-        title="Sign Out"
-        onPress={handleLogout}
-        style={{ marginVertical: 8, marginHorizontal: 20, bottom: 100, backgroundColor:'white'}}
-        borderColor={isDarkMode ? "white" : "white"}    
-      />
+        <CustomButton
+          title="Sign Out"
+          onPress={handleLogout}
+          style={{ marginVertical: 8, marginHorizontal: 20, bottom: 100, backgroundColor: 'white' }}
+          borderColor={isDarkMode ? "white" : "white"}
+        />
       </View>
     </View>
   );
@@ -159,3 +158,4 @@ const styles = StyleSheet.create({
     marginBottom:20
   }
 });
+
