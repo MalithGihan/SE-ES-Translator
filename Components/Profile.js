@@ -1,10 +1,17 @@
-import { StyleSheet, Text, View, Switch, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Switch,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React, { useContext } from "react";
 import { ThemeContext } from "./SettingsContext";
 import CustomButton from "../Screens/Login/CustomButton";
 import { logout } from "../utils/actions/authActions";
 import { useSelector, useDispatch } from "react-redux";
-import Icon from 'react-native-vector-icons/FontAwesome'; 
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default Profile = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -21,7 +28,7 @@ export default Profile = ({ navigation }) => {
   };
 
   const navigateToEditUser = () => {
-    navigation.navigate("Edituser"); 
+    navigation.navigate("Edituser");
   };
 
   return (
@@ -43,24 +50,41 @@ export default Profile = ({ navigation }) => {
           style={styles.logo}
           resizeMode="contain"
         />
-        <TouchableOpacity onPress={navigateToEditUser}>
-          <Icon name="edit" size={24} color={isDarkMode ? "white" : "black"} />
-        </TouchableOpacity>
       </View>
 
       <View style={styles.container2}>
-        <Text style={[styles.title, { color: isDarkMode ? "white" : "#736F72" }]}>
+        <Text
+          style={[styles.title, { color: isDarkMode ? "white" : "#736F72" }]}
+        >
           Welcome {userData && userData.fullName ? userData.fullName : "User"}
         </Text>
         {userData ? (
-          <View style={[styles.info, { backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72" }]}>
-            <Text style={[styles.text1, { color: isDarkMode ? "white" : "white" }]}>
+          <View
+            style={[
+              styles.info,
+              { backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72" },
+            ]}
+          >
+            <TouchableOpacity onPress={navigateToEditUser} style={{position:'relative',flexDirection:'row',justifyContent:'flex-end'}}>
+              <Icon
+                name="edit"
+                size={25}
+                color={isDarkMode ? "#00ffcc" : "#fff"}
+              />
+            </TouchableOpacity>
+            <Text
+              style={[styles.text1, { color: isDarkMode ? "white" : "white" }]}
+            >
               {userData.fullName}
             </Text>
-            <Text style={[styles.text, { color: isDarkMode ? "white" : "white" }]}>
+            <Text
+              style={[styles.text, { color: isDarkMode ? "white" : "white" }]}
+            >
               User Role: {userData.role}
             </Text>
-            <Text style={[styles.text, { color: isDarkMode ? "white" : "white" }]}>
+            <Text
+              style={[styles.text, { color: isDarkMode ? "white" : "white" }]}
+            >
               Email: {userData.email}
             </Text>
           </View>
@@ -71,7 +95,9 @@ export default Profile = ({ navigation }) => {
 
       <View style={styles.setting}>
         <View style={styles.setting1}>
-          <Text style={[styles.text, { color: isDarkMode ? "white" : "black" }]}>
+          <Text
+            style={[styles.text, { color: isDarkMode ? "white" : "black" }]}
+          >
             Dark Mode
           </Text>
           <Switch value={isDarkMode} onValueChange={toggleTheme} />
@@ -82,7 +108,12 @@ export default Profile = ({ navigation }) => {
         <CustomButton
           title="Sign Out"
           onPress={handleLogout}
-          style={{ marginVertical: 8, marginHorizontal: 20, bottom: 100, backgroundColor: 'white' }}
+          style={{
+            marginVertical: 8,
+            marginHorizontal: 20,
+            bottom: 100,
+            backgroundColor: "white",
+          }}
           borderColor={isDarkMode ? "white" : "white"}
         />
       </View>
@@ -98,7 +129,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   header: {
-    width:'100%',
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -115,10 +146,10 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     marginLeft: 5,
   },
-  info:{
-    paddingVertical:20,
-    paddingHorizontal:15,
-    borderRadius:10
+  info: {
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+    borderRadius: 10,
   },
   container2: {
     flex: 1,
@@ -144,7 +175,7 @@ const styles = StyleSheet.create({
   },
   setting: {
     top: -350,
-    marginHorizontal:5
+    marginHorizontal: 5,
   },
   setting1: {
     flexDirection: "row",
@@ -153,9 +184,8 @@ const styles = StyleSheet.create({
     width: "100%",
     marginHorizontal: 10,
   },
-  bottom:{
-    bottom:10,
-    marginBottom:20
-  }
+  bottom: {
+    bottom: 10,
+    marginBottom: 20,
+  },
 });
-

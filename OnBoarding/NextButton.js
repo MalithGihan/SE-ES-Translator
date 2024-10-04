@@ -5,7 +5,7 @@ import { AntDesign } from "@expo/vector-icons";
 
 export default NextButton = ({ percentage, scrollTo }) => {
   const size = 100;
-  const strokeWidth = 2;
+  const strokeWidth = 3;
   const center = size / 2;
   const radius = size / 2 - strokeWidth / 2;
   const circumference = 2 * Math.PI * radius;
@@ -14,10 +14,13 @@ export default NextButton = ({ percentage, scrollTo }) => {
   const progressRef = useRef(null);
 
   const animateCircle = (toValue) => {
+    // Stop any previous animations on the same node
+    progressAnimation.stopAnimation();
+
     Animated.timing(progressAnimation, {
       toValue,
       duration: 250,
-      useNativeDriver: true,
+      useNativeDriver: false, // Keep it false to ensure it's JS-driven
     }).start();
   };
 
@@ -38,18 +41,16 @@ export default NextButton = ({ percentage, scrollTo }) => {
     });
 
     return () => {
-      progressAnimation.removeAllListeners()
+      progressAnimation.removeAllListeners();
     };
-
   }, [percentage]);
-
 
   return (
     <View style={styles.container}>
       <Svg width={size} height={size}>
         <G rotation="-90" origin={center}>
           <Circle
-            stroke="gray"
+            stroke="#c9c9c9"
             cx={center}
             cy={center}
             r={radius}
@@ -58,13 +59,13 @@ export default NextButton = ({ percentage, scrollTo }) => {
           />
           <Circle
             ref={progressRef}
-            stroke="gray"
+            stroke= "#000"
             cx={center}
             cy={center}
             r={radius}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
-            strokeDashoffset={circumference}
+            strokeDashoffset={circumference} 
             strokeLinecap="round"
             fill="none"
           />
@@ -79,13 +80,13 @@ export default NextButton = ({ percentage, scrollTo }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   button: {
     position: "absolute",
-    backgroundColor: "black",
+    backgroundColor: "#333",
     borderRadius: 100,
     padding: 15,
   },
