@@ -20,7 +20,6 @@ const initialState = {
   formIsValid: false,
 };
 
-
 const reducer = (state, action) => {
   const { validationResult, inputId, inputValue } = action;
 
@@ -72,7 +71,7 @@ const Edituser = ({ navigation }) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailPattern.test(inputValue) ? true : "Invalid email format";
       case "password":
-        return inputValue.length >= 6
+        return inputValue.length >= 6 || inputValue.length === 0
           ? true
           : "Password must be at least 6 characters";
       default:
@@ -90,18 +89,32 @@ const Edituser = ({ navigation }) => {
   };
 
   const handleUpdate = async () => {
-    if (!formState.formIsValid) {
-      Alert.alert('Please fix the errors in the form.');
+    const updatedData = {};
+
+    if (formState.inputValues.fullName !== userData.fullName) {
+      updatedData.fullName = formState.inputValues.fullName;
+    }
+    
+    if (formState.inputValues.email !== userData.email) {
+      updatedData.email = formState.inputValues.email;
+    }
+
+    if (formState.inputValues.password) {
+      const validationResult = validateInput('password', formState.inputValues.password);
+      if (validationResult === true) {
+        updatedData.password = formState.inputValues.password;
+      } else {
+        Alert.alert('Please fix the errors in the form.');
+        return;
+      }
+    }
+
+    if (Object.keys(updatedData).length === 0) {
+      Alert.alert('No changes detected.');
       return;
     }
 
     try {
-      const updatedData = {
-        fullName: formState.inputValues.fullName,
-        email: formState.inputValues.email,
-        password: formState.inputValues.password,
-      };
-
       await dispatch(updateUser(userData.userId, updatedData));
       navigation.goBack();
     } catch (error) {
