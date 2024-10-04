@@ -172,7 +172,7 @@ export default Translator = () => {
           <TextInput style={[styles.additionalInput,
           {
             backgroundColor: isDarkMode ? "#8a8a8a" : "#736F72",
-            color: isDarkMode ? "white" : "#E9E3E6"
+            color: isDarkMode ? "white" : "#fff"
           },]}
             placeholder="Enter Text"
             placeholderTextColor={isDarkMode ? "#ffffff" : "#E9E3E6"}
@@ -208,7 +208,7 @@ export default Translator = () => {
               >
                 <AntDesign
                   name="staro"
-                  size={30}
+                  size={24}
                   color={isDarkMode ? "white" : "white"}
                 />
               </TouchableOpacity>
@@ -225,10 +225,10 @@ export default Translator = () => {
                   color={
                     translatedtext
                       ? isDarkMode
-                        ? "white"
+                        ? "#fff"
                         : "#fff"
                       : isDarkMode
-                        ? "#aaaaaa"
+                        ? "#fff"
                         : "#fff"
                   }
                 />
@@ -255,7 +255,7 @@ export default Translator = () => {
             textAlignVertical='top'
           />
           {fromLang === "en" && culturalTranslation && (
-            <Text style={styles.culturalTranslation}>{culturalTranslation}</Text>
+            <Text style={[styles.culturalTranslation,{ color: isDarkMode ? "white" : "#000" }]}>{culturalTranslation}</Text>
           )}
           <TouchableOpacity
             style={[styles.speakButton, {
@@ -300,6 +300,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     width: "100%",
+    paddingTop: 20
   },
   formContainer: {
     width: "100%",
@@ -333,8 +334,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
   },
+  inputContainer:{
+    marginVertical:10,
+    borderRadius:10,
+    borderWidth:1
+  },
   innerContainer: {
     width: '100%',
+    borderRadius:10,
     justifyContent: 'center',
   },
   itemHeading: {
@@ -366,9 +373,8 @@ const styles = StyleSheet.create({
     width: '95%',
     marginTop: 10,
     marginLeft: 10,
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: 'black',
+    fontSize: 20,
+    fontWeight: '900',
   },
 
 });

@@ -45,6 +45,26 @@ export const validateString = (id, value) => {
     };
   
     const validationResult = validate({ [id]: value }, { [id]: constraints });
-    return validationResult ? validationResult[id] : null; // Return null if valid
+    return validationResult ? validationResult[id] : null; 
   };
+
+  export const validateConfirmPassword = (password, confirmPassword) => {
+  const constraints = {
+    presence: {
+      allowEmpty: false,
+      message: "Confirm Password is required"
+    },
+    equality: {
+      attribute: "password",
+      message: "Passwords do not match"
+    }
+  };
+
+  const validationResult = validate(
+    { confirmPassword, password },
+    { confirmPassword: constraints }
+  );
+
+  return validationResult ? validationResult.confirmPassword : null; 
+};
   
