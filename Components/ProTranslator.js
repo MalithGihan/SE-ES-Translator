@@ -16,7 +16,7 @@ import * as Clipboard from "expo-clipboard";
 import Toast from "react-native-toast-message";
 import { ThemeContext } from "./SettingsContext";
 
-export default ProTranslator = () => {
+export default ProTranslator = (navigate) => {
   const [proverbs, setProverbs] = useState([]);
   const [enteredtext, setenteredtext] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -86,7 +86,8 @@ export default ProTranslator = () => {
       filteredProverbs = proverbs.filter(
         (proverb) =>
           proverb.sinhaleseProverb.toLowerCase().includes(text.toLowerCase()) ||
-          proverb.singlishMeaning.toLowerCase().includes(text.toLowerCase())
+          proverb.singlishMeaning.toLowerCase().includes(text.toLowerCase()) ||
+          proverb.type.toLowerCase().includes(text.toLowerCase())   
       );
     }
 
@@ -244,6 +245,16 @@ export default ProTranslator = () => {
                   ? `${item.singlishMeaning}`
                   : item.singlishMeaning}
               </Text>
+              <Text
+                style={[
+                  styles.meaningText2,
+                  { color: isDarkMode ? "#B2B2B2" : "#fff" },
+                ]}
+              >
+                {fromLang === "en"
+                  ? `${item.type}`
+                  : item.type}
+              </Text>
             </View>
           )}
           contentContainerStyle={{ paddingBottom: 300 }} 
@@ -324,7 +335,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-
+  meaningText2: {
+    width: 90,
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "800",
+    borderRadius: 5,
+    color: "#fff",
+    backgroundColor: "#000",
+    padding: 2,
+  },
   speakButton: {
     marginTop: 10,
     padding: 10,

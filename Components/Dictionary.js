@@ -30,7 +30,7 @@ export default Dictionary = () => {
           from: 'en'
         },
         headers: {
-          'x-rapidapi-key': '4e1aa0bf4emsh14488fc7aa3851ap1a384ejsn2d1c01fccbd3',
+          'x-rapidapi-key': '0c8cee72c0msh02617e0e513b46dp19ea48jsn648869493343',
           'x-rapidapi-host': 'nlp-translation.p.rapidapi.com'
         }
       });

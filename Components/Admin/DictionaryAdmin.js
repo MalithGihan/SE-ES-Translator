@@ -13,7 +13,7 @@ export default function DictionaryAdmin({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedOption, setSelectedOption] = useState('Cultural');
 
-  const fetchWords = async () => {
+  const fetchWords = async (navigate) => {
     try {
       const data = await RetrieveAllCWords();
       const wordsList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
